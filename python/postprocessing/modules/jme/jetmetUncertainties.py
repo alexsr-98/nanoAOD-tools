@@ -23,12 +23,21 @@ class jetmetUncertaintiesProducer(Module):
         self.jesUncertainties = jesUncertainties
 
         # smear jet pT to account for measured difference in JER between data and simulation.
-        if era == "2016":
+        if self.era == "2016":
             self.jerInputFileName = "Summer16_25nsV1_MC_PtResolution_" + jetType + ".txt"
             self.jerUncertaintyInputFileName = "Summer16_25nsV1_MC_SF_" + jetType + ".txt"
-        elif era == "2017" or era == "2018": # use Fall17 as temporary placeholder until post-Moriond 2019 JERs are out
+
+        if self.era == "2017":
             self.jerInputFileName = "Fall17_V3_MC_PtResolution_" + jetType + ".txt"
             self.jerUncertaintyInputFileName = "Fall17_V3_MC_SF_" + jetType + ".txt"
+
+        if self.era == "2018":
+            #self.jerInputFileName = "Autumn18_V1_MC_PtResolution_" + jetType + ".txt"
+            #self.jerUncertaintyInputFileName = "Autumn18_V1_MC_SF_" + jetType + ".txt"
+            self.jerInputFileName = "Fall17_V3_MC_PtResolution_" + jetType + ".txt"
+            self.jerUncertaintyInputFileName = "Fall17_V3_MC_SF_" + jetType + ".txt"
+            #self.jerInputFileName = "Autumn18_V7_MC_PtResolution_" + jetType + ".txt"
+            #self.jerUncertaintyInputFileName = "Autumn18_V7_MC_SF_" + jetType + ".txt"
 
         #jet mass resolution: https://twiki.cern.ch/twiki/bin/view/CMS/JetWtagging
         #2016 values
@@ -62,7 +71,8 @@ class jetmetUncertaintiesProducer(Module):
             self.corrMET = False
         else:
             raise ValueError("ERROR: Invalid jet type = '%s'!" % jetType)
-        self.metBranchName = "MET" if (self.era != 2017 and self.era != 17) else 'METFixEE2017'
+        self.metBranchName = "MET" if (self.era != 2017 and self.era != 17 and self.era != '2017' and self.era != '17') else 'METFixEE2017'
+        if globalTag == "Spring18_ppRef5TeV_V4_MC": self.metBranchName = "MET"
         self.rhoBranchName = "fixedGridRhoFastjetAll"
         self.lenVar = "n" + self.jetBranchName
 
@@ -565,8 +575,8 @@ class jetmetUncertaintiesProducer(Module):
         return True
 
 # define modules using the syntax 'name = lambda : constructor' to avoid having them loaded when not needed
-jetmetUncertainties5TeV = lambda : jetmetUncertaintiesProducer("2017", "Spring18_ppRef5TeV_V2_MC", [ "Total" ], redoJEC=True)
-jetmetUncertainties5TeVAll = lambda : jetmetUncertaintiesProducer("2017", "Spring18_ppRef5TeV_V2_MC", [ "All" ], redoJEC=True)
+jetmetUncertainties5TeV = lambda : jetmetUncertaintiesProducer("2017", "Spring18_ppRef5TeV_V4_MC", [ "Total" ], redoJEC=True)
+jetmetUncertainties5TeVAll = lambda : jetmetUncertaintiesProducer("2017", "Spring18_ppRef5TeV_V4_MC", [ "All" ], redoJEC=True)
 
 jetmetUncertainties2016 = lambda : jetmetUncertaintiesProducer("2016", "Summer16_07Aug2017_V11_MC", [ "Total" ], redoJEC=False)
 jetmetUncertainties2016All = lambda : jetmetUncertaintiesProducer("2016", "Summer16_07Aug2017_V11_MC", [ "All" ], redoJEC=False)
