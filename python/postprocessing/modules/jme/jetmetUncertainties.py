@@ -43,6 +43,10 @@ class jetmetUncertaintiesProducer(Module):
         self.splitJER = splitJER
         if self.splitJER:
             self.splitJERIDs = list(range(6))
+
+            #### MODIFYING TO ADD TOTAL JER ALSO WHENEVER JER SPLITTING IS ASKED FOR
+            self.splitJERIDs.append("")
+            ####
         else:
             self.splitJERIDs = [""]  # "empty" ID for the overall JER
         self.metBranchName = metBranchName
@@ -618,6 +622,14 @@ class jetmetUncertaintiesProducer(Module):
                 jet_mass_jerUp[thisJERID] = jet_pt_jerUpVal * jet_mass
                 jet_mass_jerDown[thisJERID] = jet_pt_jerDownVal * jet_mass
 
+                #### MODIFYING TO ADD TOTAL JER ALSO WHENEVER JER SPLITTING IS ASKED FOR
+                if self.splitJER:
+                    jet_pt_jerUp[""]     = jet_pt_jerUpVal   * jet_pt
+                    jet_pt_jerDown[""]   = jet_pt_jerDownVal * jet_pt
+                    jet_mass_jerUp[""]   = jet_pt_jerUpVal   * jet_mass
+                    jet_mass_jerDown[""] = jet_pt_jerDownVal * jet_mass
+                ####
+
                 # evaluate JES uncertainties
                 jet_pt_jesUp = {}
                 jet_pt_jesDown = {}
@@ -762,6 +774,12 @@ class jetmetUncertaintiesProducer(Module):
                                 if jerID == self.getJERsplitID(
                                         jet_pt_nom, jet.eta):
                                     jerUpVal, jerDownVal = jet_pt_jerUpVal, jet_pt_jerDownVal
+
+                                #### MODIFYING TO ADD TOTAL JER ALSO WHENEVER JER SPLITTING IS ASKED FOR
+                                elif (jerID == "") and self.splitJER:
+                                    jerUpVal, jerDownVal = jet_pt_jerUpVal, jet_pt_jerDownVal
+                                ####
+
                                 met_T1Smear_px_jerUp[
                                     jerID] = met_T1Smear_px_jerUp[jerID] - (
                                         jet_pt_L1L2L3 * jerUpVal -
