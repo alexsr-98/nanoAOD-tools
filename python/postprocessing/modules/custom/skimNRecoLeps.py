@@ -7,11 +7,12 @@ from PhysicsTools.NanoAODTools.postprocessing.framework.datamodel import Collect
 from PhysicsTools.NanoAODTools.postprocessing.framework.eventloop import Module
 
 class skipNRecoLeps(Module):
-    def __init__(self):
+    def __init__(self, _isd):
         self.minelpt    =  15# 12 # 10 for 5 TeV, 18 for 13 # 7 for multilep
         self.minmupt    =  15#  0 for 5 TeV, 18 for 13 # 7 for multilep
         self.maxeleta   = 2.5
         self.maxmueta   = 2.5
+        self.isd        = _isd
         return
 
     def beginJob(self):
@@ -36,7 +37,7 @@ class skipNRecoLeps(Module):
             if el.pt > self.minelpt and abs(el.eta) < self.maxeleta:
                 nlepgood += 1
 
-        return ((nlepgood >= 2) or (event.nGenDressedLepton >= 2))
-
-
-skimRecoLeps = lambda : skipNRecoLeps()
+        if self.isd:
+            return (nlepgood >= 2)
+        else:
+            return ((nlepgood >= 2) or (event.nGenDressedLepton >= 2))

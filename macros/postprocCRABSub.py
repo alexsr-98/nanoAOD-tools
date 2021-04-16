@@ -2,16 +2,256 @@ import getpass, argparse
 import os, sys
 from multiprocessing import Process
 from datetime import datetime
+import CentralSettings as cs
 
+xsecDict = {"DY_M0to50"       : 106300.0,
+            "DY_M10to50"      : 22635.09,
+            "DY_M50"          : 6025.2,
 
+            "WWbb_bb4l"       : 52.54,          # NLO
 
-xsecDict = {"tW_inclusive"  : 35.85, # NNLO
-            "tW_nofullyhad" : 19.4674104, # NNLO
+            "ttbar_dilep"     : 88.28769753,    # NNLO
+            "ttbar_semilep"   : 365.3994209,    # NNLO
+            "ttbar_inclusive" : 831.76,         # NNLO
+
+            "tW_inclusive"    : 35.85,          # NNLO
+            "tW_nofullyhad"   : 19.4674104,     # NNLO
+
+            "ttW_lep"         : 0.2043,
+            "ttW_ewkNLO_lep"  : 0.491,
+            "ttW_had"         : 0.4062,
+
+            "ttZ_lep_M1to10"  : 0.0493,
+            "ttZ_lep_M10"     : 0.2529,
+            "ttZ_had"         : 0.5297,
+            "ttZ_had_dilep"   : 0.0568,
+
+            "ttGamma_dilep"   : 1.495,
+            "ttGamma_singlel" : 5.08,
+
+            "WJets_lep"       : 61526.7,
+
+            "WW"              : 115,
+            "WW_dilep"        : 12.178,
+            "WW_dilep_2scatt" : 1.61704,
+            "WW_lnuqq"        : 45.53,
+
+            "WZ"              : 47.13,
+            "WZ_lnu2q"        : 10.7408,
+            "WZ_2l2q"         : 5.595,
+            "WZ_3lnu"         : 4.42965,
+
+            "ZZ"              : 16.523,
+            "ZZ_dilep"        : 0.564,
+            "ZZ_2l2q"         : 3.28,
+            "ZZ_2q2nu"        : 4.04,
+            "ZZ_4l"           : 1.256,
+            "ZZ_4l_2scatt"    : 0.009697,
+
+            "WWW"             : 0.2086,
+            "WWZ"             : 0.1651,
+            "WWG"             : 0.2147,
+            "WZZ"             : 0.05565,
+            "WZG"             : 0.0412,
+            "ZZZ"             : 0.01398,
 }
 
 
-xsecDictExtended = {"ST_tW_antitop_5f_NoFullyHadronicDecays_TuneEE5C_13TeV-powheg-herwigpp" : xsecDict["tW_nofullyhad"],
-                    "ST_tW_top_5f_inclusiveDecays_TuneCP5_PSweights_13TeV-powheg-pythia8" : xsecDict["tW_inclusive"]
+xsecDictExtended = {"ST_tW_antitop_5f_NoFullyHadronicDecays_TuneEE5C_13TeV-powheg-herwigpp"         : xsecDict["tW_nofullyhad"],
+                    "ST_tW_top_5f_NoFullyHadronicDecays_TuneEE5C_13TeV-powheg-herwigpp"             : xsecDict["tW_nofullyhad"],
+                    "ST_tW_antitop_5f_NoFullyHadronicDecays_TuneCH3_13TeV-powheg-herwig7"           : xsecDict["tW_nofullyhad"],
+                    "ST_tW_top_5f_NoFullyHadronicDecays_TuneCH3_13TeV-powheg-herwig7"               : xsecDict["tW_nofullyhad"],
+                    "ST_tW_top_5f_NoFullyHadronicDecays_TuneCP5_PSweights_13TeV-powheg-pythia8"     : xsecDict["tW_nofullyhad"],
+                    "ST_tW_antitop_5f_NoFullyHadronicDecays_TuneCP5_PSweights_13TeV-powheg-pythia8" : xsecDict["tW_nofullyhad"],
+                    "ST_tW_antitop_5f_NoFullyHadronicDecays_TuneCP5_13TeV-powheg-pythia8"           : xsecDict["tW_nofullyhad"],
+                    "ST_tW_top_5f_NoFullyHadronicDecays_TuneCP5_13TeV-powheg-pythia8"               : xsecDict["tW_nofullyhad"],
+                    "ST_tW_antitop_5f_inclusiveDecays_TuneCP5_PSweights_13TeV-powheg-pythia8"       : xsecDict["tW_inclusive"],
+                    "ST_tW_top_5f_inclusiveDecays_TuneCP5_PSweights_13TeV-powheg-pythia8"           : xsecDict["tW_inclusive"],
+                    "ST_tW_antitop_5f_inclusiveDecays_TuneCP5_13TeV-powheg-pythia8"                 : xsecDict["tW_inclusive"],
+                    "ST_tW_top_5f_inclusiveDecays_TuneCP5_13TeV-powheg-pythia8"                     : xsecDict["tW_inclusive"],
+
+                    "DYJetsToLL_M-10to50_TuneCP5_13TeV-madgraphMLM-pythia8"                         : xsecDict["DY_M10to50"],
+                    "DYJetsToLL_M-10to50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8"                    : xsecDict["DY_M10to50"],
+                    "DYJetsToLL_M-10to50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8"                   : xsecDict["DY_M10to50"],
+                    "DYJetsToLL_Pt-0To50_TuneCP5_13TeV-amcatnloFXFX-pythia8"                        : xsecDict["DY_M0to50"],
+                    "DYJetsToLL_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8"                        : xsecDict["DY_M50"],
+                    "DYJetsToLL_M-50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8"                       : xsecDict["DY_M50"],
+                    "DYJetsToLL_M-50_TuneCP5_13TeV-amcatnloFXFX-pythia8"                            : xsecDict["DY_M50"],
+                    "DYJetsToLL_M-50_TuneCP5_13TeV-madgraphMLM-pythia8"                             : xsecDict["DY_M50"],
+
+                    "b_bbar_4l_TuneCP5_13TeV-powheg-pythia8"                                        : xsecDict["WWbb_bb4l"],
+
+                    "TTJets_TuneCP5_13TeV-amcatnloFXFX-pythia8"                                     : xsecDict["ttbar_inclusive"],
+                    "TT_TuneCH3_13TeV-powheg-herwig7"                                               : xsecDict["ttbar_inclusive"],
+                    "TTTo2L2Nu_TuneCP5_13TeV-powheg-pythia8"                                        : xsecDict["ttbar_dilep"],
+                    "TTTo2L2Nu_TuneCP5_PSweights_13TeV-powheg-pythia8"                              : xsecDict["ttbar_dilep"],
+                    "TTToSemiLeptonic_TuneCP5_PSweights_13TeV-powheg-pythia8"                       : xsecDict["ttbar_semilep"],
+                    "TTToSemiLeptonic_TuneCP5_13TeV-powheg-pythia8"                                 : xsecDict["ttbar_semilep"],
+
+                    "TTZToLL_M-1to10_TuneCP5_13TeV-amcatnlo-pythia8"                                : xsecDict["ttZ_lep_M1to10"],
+                    "TTZToLL_M-1to10_TuneCUETP8M1_13TeV-madgraphMLM-pythia8"                        : xsecDict["ttZ_lep_M1to10"],
+                    "TTZToLLNuNu_M-10_TuneCP5_PSweights_13TeV-amcatnlo-pythia8"                     : xsecDict["ttZ_lep_M10"],
+                    "TTZToLLNuNu_M-10_TuneCP5_13TeV-amcatnlo-pythia8"                               : xsecDict["ttZ_lep_M10"],
+                    "TTZJetsToQQ_Dilept_TuneCP5_PSweights_13TeV-amcatnlo-pythia8"                   : xsecDict["ttZ_had_dilep"],
+                    "TTZToQQ_TuneCP5_13TeV-amcatnlo-pythia8"                                        : xsecDict["ttZ_had"],
+
+                    "TTWJetsToLNu_TuneCP5_PSweights_13TeV-amcatnloFXFX-madspin-pythia8"             : xsecDict["ttW_lep"],
+                    "TTWJetsToLNu_TuneCP5_13TeV-amcatnloFXFX-madspin-pythia8"                       : xsecDict["ttW_lep"],
+                    "TTWJetsToLNu_EWK_5f_NLO"                                                       : xsecDict["ttW_ewkNLO_lep"],
+                    "TTWJetsToQQ_TuneCUETP8M1_13TeV-amcatnloFXFX-madspin-pythia8"                   : xsecDict["ttW_had"],
+                    "TTWJetsToQQ_TuneCP5_13TeV-amcatnloFXFX-madspin-pythia8"                        : xsecDict["ttW_had"],
+
+                    "TTGamma_Dilept_TuneCP5_PSweights_13TeV-madgraph-pythia8"                       : xsecDict["ttGamma_dilep"],
+                    "TTGamma_Dilept_TuneCP5_13TeV-madgraph-pythia8"                                 : xsecDict["ttGamma_dilep"],
+                    "TTGamma_SingleLept_TuneCP5_PSweights_13TeV-madgraph-pythia8"                   : xsecDict["ttGamma_singlel"],
+                    "TTGamma_SingleLept_TuneCP5_13TeV-madgraph-pythia8"                             : xsecDict["ttGamma_singlel"],
+
+                    "WJetsToLNu_TuneCP5_13TeV-madgraphMLM-pythia8"                                  : xsecDict["WJets_lep"],
+                    "WJetsToLNu_TuneCUETP8M1_13TeV-madgraphMLM-pythia8"                             : xsecDict["WJets_lep"],
+                    "WJetsToLNu_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8"                            : xsecDict["WJets_lep"],
+                    "WJetsToLNu_0J_TuneCP5_13TeV-amcatnloFXFX-pythia8"                              : xsecDict["WJets_lep"], #### WARNING
+                    "WJetsToLNu_1J_TuneCP5_13TeV-amcatnloFXFX-pythia8"                              : xsecDict["WJets_lep"], #### WARNING
+                    "WJetsToLNu_2J_TuneCP5_13TeV-amcatnloFXFX-pythia8"                              : xsecDict["WJets_lep"], #### WARNING
+
+                    "WWTo2L2Nu_13TeV-powheg"                                                        : xsecDict["WW_dilep"],
+                    "WWTo2L2Nu_NNPDF31_TuneCP5_13TeV-powheg-pythia8"                                : xsecDict["WW_dilep"],
+                    "WWTo2L2Nu_NNPDF31_TuneCP5_PSweights_13TeV-powheg-pythia8"                      : xsecDict["WW_dilep"],
+                    "WWTo2L2Nu_DoubleScattering_13TeV-pythia8"                                      : xsecDict["WW_dilep_2scatt"],
+                    "WWToLNuQQ_13TeV-powheg"                                                        : xsecDict["WW_lnuqq"],
+                    "WWToLNuQQ_NNPDF31_TuneCP5_13TeV-powheg-pythia8"                                : xsecDict["WW_lnuqq"],
+                    "WWToLNuQQ_NNPDF31_TuneCP5_PSweights_13TeV-powheg-pythia8"                      : xsecDict["WW_lnuqq"],
+                    "WWTo1L1Nu2Q_13TeV_amcatnloFXFX_madspin_pythia8"                                : xsecDict["WW_lnuqq"],
+
+                    "WZTo1L1Nu2Q_TuneCP5_13TeV_amcatnloFXFX_madspin_pythia8"                        : xsecDict["WZ_lnu2q"],
+                    "WZTo1L1Nu2Q_13TeV_amcatnloFXFX_madspin_pythia8"                                : xsecDict["WZ_lnu2q"],
+                    "WZToLNu2Q_13TeV_powheg_pythia8"                                                : xsecDict["WZ_lnu2q"],
+                    "WZTo2L2Q_13TeV_amcatnloFXFX_madspin_pythia8"                                   : xsecDict["WZ_2l2q"],
+                    "WZTo3LNu_TuneCUETP8M1_13TeV-powheg-pythia8"                                    : xsecDict["WZ_3lnu"],
+                    "WZTo3LNu_13TeV-powheg-pythia8"                                                 : xsecDict["WZ_3lnu"],
+                    "WZTo3LNu_TuneCP5_13TeV-powheg-pythia8"                                         : xsecDict["WZ_3lnu"],
+
+                    "ZZTo2L2Nu_13TeV_powheg_pythia8"                                                : xsecDict["ZZ_dilep"],
+                    "ZZTo2L2Nu_13TeV_powheg_pythia8_ext1"                                           : xsecDict["ZZ_dilep"],
+                    "ZZTo2L2Nu_TuneCP5_13TeV_powheg_pythia8"                                        : xsecDict["ZZ_dilep"],
+                    "ZZTo2L2Q_13TeV_amcatnloFXFX_madspin_pythia8"                                   : xsecDict["ZZ_2l2q"],
+                    "ZZTo2L2Q_TuneCUETP8M1_13TeV_amcatnloFXFX_madspin_pythia8"                      : xsecDict["ZZ_2l2q"],
+                    "ZZTo2L2Q_TuneCP5_13TeV_amcatnloFXFX_madspin_pythia8"                           : xsecDict["ZZ_2l2q"],
+                    "ZZTo4L_13TeV_powheg_pythia8"                                                   : xsecDict["ZZ_4l"],
+                    "ZZTo4L_TuneCP5_13TeV_powheg_pythia8"                                           : xsecDict["ZZ_4l"],
+                    "ZZTo4L_DoubleScattering_13TeV-pythia8"                                         : xsecDict["ZZ_4l_2scatt"],
+                    "ZZTo4L_TuneCP5_DoubleScattering_13TeV-pythia8"                                 : xsecDict["ZZ_4l_2scatt"],
+
+                    "WWW_4F_TuneCUETP8M1_13TeV-amcatnlo-pythia8"                                    : xsecDict["WWW"],
+                    "WWW_4F_TuneCP5_13TeV-amcatnlo-pythia8"                                         : xsecDict["WWW"],
+                    "WWZ_TuneCUETP8M1_13TeV-amcatnlo-pythia8"                                       : xsecDict["WWZ"],
+                    "WWZ_4F_TuneCP5_13TeV-amcatnlo-pythia8"                                         : xsecDict["WWZ"],
+                    "WWZ_TuneCP5_13TeV-amcatnlo-pythia8"                                            : xsecDict["WWZ"],
+                    "WWG_TuneCUETP8M1_13TeV-amcatnlo-pythia8"                                       : xsecDict["WWG"],
+                    "WWG_TuneCP5_13TeV-amcatnlo-pythia8"                                            : xsecDict["WWG"],
+                    "WZG_TuneCUETP8M1_13TeV-amcatnlo-pythia8"                                       : xsecDict["WZG"],
+                    "WZG_TuneCP5_13TeV-amcatnlo-pythia8"                                            : xsecDict["WZG"],
+                    "WZZ_TuneCUETP8M1_13TeV-amcatnlo-pythia8"                                       : xsecDict["WZZ"],
+                    "WZZ_TuneCP5_13TeV-amcatnlo-pythia8"                                            : xsecDict["WZZ"],
+                    "ZZZ_TuneCUETP8M1_13TeV-amcatnlo-pythia8"                                       : xsecDict["ZZZ"],
+                    "ZZZ_TuneCP5_13TeV-amcatnlo-pythia8"                                            : xsecDict["ZZZ"],
+
+                    "TTTo2L2Nu_hdampDOWN_TuneCP5_13TeV-powheg-pythia8"                              : xsecDict["ttbar_dilep"],
+                    "TTTo2L2Nu_hdampUP_TuneCP5_13TeV-powheg-pythia8"                                : xsecDict["ttbar_dilep"],
+                    "TTTo2L2Nu_hdampDOWN_TuneCP5_PSweights_13TeV-powheg-pythia8"                    : xsecDict["ttbar_dilep"],
+                    "TTTo2L2Nu_hdampUP_TuneCP5_PSweights_13TeV-powheg-pythia8"                      : xsecDict["ttbar_dilep"],
+                    "TTTo2L2Nu_TuneCP5down_13TeV-powheg-pythia8"                                    : xsecDict["ttbar_dilep"],
+                    "TTTo2L2Nu_TuneCP5up_13TeV-powheg-pythia8"                                      : xsecDict["ttbar_dilep"],
+                    "TTTo2L2Nu_TuneCP5down_PSweights_13TeV-powheg-pythia8"                          : xsecDict["ttbar_dilep"],
+                    "TTTo2L2Nu_TuneCP5up_PSweights_13TeV-powheg-pythia8"                            : xsecDict["ttbar_dilep"],
+                    "TTTo2L2Nu_TuneCP5CR1_QCDbased_13TeV-powheg-pythia8"                            : xsecDict["ttbar_dilep"],
+                    "TTTo2L2Nu_TuneCP5CR1_QCDbased_PSweights_13TeV-powheg-pythia8"                  : xsecDict["ttbar_dilep"],
+                    "TTTo2L2Nu_TuneCP5CR2_GluonMove_13TeV-powheg-pythia8"                           : xsecDict["ttbar_dilep"],
+                    "TTTo2L2Nu_TuneCP5CR2_GluonMove_PSweights_13TeV-powheg-pythia8"                 : xsecDict["ttbar_dilep"],
+                    "TTTo2L2Nu_TuneCP5_PSweights_erdON_13TeV-powheg-pythia8"                        : xsecDict["ttbar_dilep"],
+                    "TTTo2L2Nu_TuneCP5_erdON_13TeV-powheg-pythia8"                                  : xsecDict["ttbar_dilep"],
+                    "TTTo2L2Nu_mtop166p5_TuneCP5_13TeV-powheg-pythia8"                              : xsecDict["ttbar_dilep"],
+                    "TTTo2L2Nu_mtop166p5_TuneCP5_PSweights_13TeV-powheg-pythia8"                    : xsecDict["ttbar_dilep"],
+                    "TTTo2L2Nu_mtop169p5_TuneCP5_13TeV-powheg-pythia8"                              : xsecDict["ttbar_dilep"],
+                    "TTTo2L2Nu_mtop169p5_TuneCP5_PSweights_13TeV-powheg-pythia8"                    : xsecDict["ttbar_dilep"],
+                    "TTTo2L2Nu_mtop171p5_TuneCP5_PSweights_13TeV-powheg-pythia8"                    : xsecDict["ttbar_dilep"],
+                    "TTTo2L2Nu_mtop171p5_TuneCP5_13TeV-powheg-pythia8"                              : xsecDict["ttbar_dilep"],
+                    "TTTo2L2Nu_mtop173p5_TuneCP5_PSweights_13TeV-powheg-pythia8"                    : xsecDict["ttbar_dilep"],
+                    "TTTo2L2Nu_mtop173p5_TuneCP5_13TeV-powheg-pythia8"                              : xsecDict["ttbar_dilep"],
+                    "TTTo2L2Nu_mtop175p5_TuneCP5_PSweights_13TeV-powheg-pythia8"                    : xsecDict["ttbar_dilep"],
+                    "TTTo2L2Nu_mtop175p5_TuneCP5_13TeV-powheg-pythia8"                              : xsecDict["ttbar_dilep"],
+                    "TTTo2L2Nu_mtop178p5_TuneCP5_13TeV-powheg-pythia8"                              : xsecDict["ttbar_dilep"],
+                    "TTTo2L2Nu_mtop178p5_TuneCP5_PSweights_13TeV-powheg-pythia8"                    : xsecDict["ttbar_dilep"],
+
+
+                    "ST_tW_antitop_5f_hdampup_NoFullyHadronicDecays_TuneCP5_13TeV-powheg-pythia8"               : xsecDict["tW_nofullyhad"],
+                    "ST_tW_antitop_5f_hdampup_NoFullyHadronicDecays_TuneCP5_PSweights_13TeV-powheg-pythia8"     : xsecDict["tW_nofullyhad"],
+                    "ST_tW_antitop_5f_hdampdown_NoFullyHadronicDecays_TuneCP5_PSweights_13TeV-powheg-pythia8"   : xsecDict["tW_nofullyhad"],
+                    "ST_tW_antitop_5f_hdampdown_NoFullyHadronicDecays_TuneCP5_13TeV-powheg-pythia8"             : xsecDict["tW_nofullyhad"],
+                    "ST_tW_top_5f_hdampup_NoFullyHadronicDecays_TuneCP5_PSweights_13TeV-powheg-pythia8"         : xsecDict["tW_nofullyhad"],
+                    "ST_tW_top_5f_hdampup_NoFullyHadronicDecays_TuneCP5_13TeV-powheg-pythia8"                   : xsecDict["tW_nofullyhad"],
+                    "ST_tW_top_5f_hdampdown_NoFullyHadronicDecays_TuneCP5_PSweights_13TeV-powheg-pythia8"       : xsecDict["tW_nofullyhad"],
+                    "ST_tW_top_5f_hdampdown_NoFullyHadronicDecays_TuneCP5_13TeV-powheg-pythia8"                 : xsecDict["tW_nofullyhad"],
+                    "ST_tW_antitop_5f_NoFullyHadronicDecays_TuneCP5up_PSweights_13TeV-powheg-pythia8"           : xsecDict["tW_nofullyhad"],
+                    "ST_tW_antitop_5f_NoFullyHadronicDecays_TuneCP5down_PSweights_13TeV-powheg-pythia8"         : xsecDict["tW_nofullyhad"],
+                    "ST_tW_antitop_5f_NoFullyHadronicDecays_TuneCP5up_13TeV-powheg-pythia8"                     : xsecDict["tW_nofullyhad"],
+                    "ST_tW_antitop_5f_NoFullyHadronicDecays_TuneCP5down_13TeV-powheg-pythia8"                   : xsecDict["tW_nofullyhad"],
+                    "ST_tW_top_5f_NoFullyHadronicDecays_TuneCP5down_13TeV-powheg-pythia8"                       : xsecDict["tW_nofullyhad"],
+                    "ST_tW_top_5f_NoFullyHadronicDecays_TuneCP5up_13TeV-powheg-pythia8"                         : xsecDict["tW_nofullyhad"],
+                    "ST_tW_top_5f_NoFullyHadronicDecays_TuneCP5up_PSweights_13TeV-powheg-pythia8"               : xsecDict["tW_nofullyhad"],
+                    "ST_tW_top_5f_NoFullyHadronicDecays_TuneCP5down_PSweights_13TeV-powheg-pythia8"             : xsecDict["tW_nofullyhad"],
+                    "ST_tW_antitop_5f_NoFullyHadronicDecays_TuneCP5CR1_PSweights_13TeV-powheg-pythia8"          : xsecDict["tW_nofullyhad"],
+                    "ST_tW_top_5f_NoFullyHadronicDecays_TuneCP5CR1_PSweights_13TeV-powheg-pythia8"              : xsecDict["tW_nofullyhad"],
+                    "ST_tW_antitop_5f_NoFullyHadronicDecays_TuneCP5CR1_13TeV-powheg-pythia8"                    : xsecDict["tW_nofullyhad"],
+                    "ST_tW_top_5f_NoFullyHadronicDecays_TuneCP5CR1_13TeV-powheg-pythia8"                        : xsecDict["tW_nofullyhad"],
+                    "ST_tW_antitop_5f_NoFullyHadronicDecays_TuneCP5CR2_PSweights_13TeV-powheg-pythia8"          : xsecDict["tW_nofullyhad"],
+                    "ST_tW_top_5f_NoFullyHadronicDecays_TuneCP5CR2_PSweights_13TeV-powheg-pythia8"              : xsecDict["tW_nofullyhad"],
+                    "ST_tW_antitop_5f_NoFullyHadronicDecays_TuneCP5CR2_13TeV-powheg-pythia8"                    : xsecDict["tW_nofullyhad"],
+                    "ST_tW_top_5f_NoFullyHadronicDecays_TuneCP5CR2_13TeV-powheg-pythia8"                        : xsecDict["tW_nofullyhad"],
+                    "ST_tW_antitop_5f_NoFullyHadronicDecays_TuneCP5_erdON_PSweights_13TeV-powheg-pythia8"       : xsecDict["tW_nofullyhad"],
+                    "ST_tW_top_5f_NoFullyHadronicDecays_TuneCP5_erdON_PSweights_13TeV-powheg-pythia8"           : xsecDict["tW_nofullyhad"],
+                    "ST_tW_antitop_5f_NoFullyHadronicDecays_TuneCP5_erdON_13TeV-powheg-pythia8"                 : xsecDict["tW_nofullyhad"],
+                    "ST_tW_top_5f_NoFullyHadronicDecays_TuneCP5_erdON_13TeV-powheg-pythia8"                     : xsecDict["tW_nofullyhad"],
+                    "ST_tW_antitop_5f_DS_NoFullyHadronicDecays_TuneCP5_PSweights_13TeV-powheg-pythia8"          : xsecDict["tW_nofullyhad"],
+                    "ST_tW_top_5f_DS_NoFullyHadronicDecays_TuneCP5_PSweights_13TeV-powheg-pythia8"              : xsecDict["tW_nofullyhad"],
+                    "ST_tW_antitop_5f_DS_NoFullyHadronicDecays_TuneCP5_13TeV-powheg-pythia8"                    : xsecDict["tW_nofullyhad"],
+                    "ST_tW_top_5f_DS_NoFullyHadronicDecays_TuneCP5_13TeV-powheg-pythia8"                        : xsecDict["tW_nofullyhad"],
+                    "ST_tW_antitop_5f_NoFullyHadronicDecays_mtop1695_TuneCP5_PSweights_13TeV-powheg-pythia8"    : xsecDict["tW_nofullyhad"],
+                    "ST_tW_antitop_5f_NoFullyHadronicDecays_mtop1695_TuneCP5_13TeV-powheg-pythia8"              : xsecDict["tW_nofullyhad"],
+                    "ST_tW_antitop_5f_NoFullyHadronicDecays_mtop1715_TuneCP5_PSweights_13TeV-powheg-pythia8"    : xsecDict["tW_nofullyhad"],
+                    "ST_tW_antitop_5f_NoFullyHadronicDecays_mtop1715_TuneCP5_13TeV-powheg-pythia8"              : xsecDict["tW_nofullyhad"],
+                    "ST_tW_antitop_5f_NoFullyHadronicDecays_mtop1735_TuneCP5_PSweights_13TeV-powheg-pythia8"    : xsecDict["tW_nofullyhad"],
+                    "ST_tW_antitop_5f_NoFullyHadronicDecays_mtop1735_TuneCP5_13TeV-powheg-pythia8"              : xsecDict["tW_nofullyhad"],
+                    "ST_tW_antitop_5f_NoFullyHadronicDecays_mtop1755_TuneCP5_PSweights_13TeV-powheg-pythia8"    : xsecDict["tW_nofullyhad"],
+                    "ST_tW_antitop_5f_NoFullyHadronicDecays_mtop1755_TuneCP5_13TeV-powheg-pythia8"              : xsecDict["tW_nofullyhad"],
+                    "ST_tW_top_5f_NoFullyHadronicDecays_mtop1695_TuneCP5_PSweights_13TeV-powheg-pythia8"        : xsecDict["tW_nofullyhad"],
+                    "ST_tW_top_5f_NoFullyHadronicDecays_mtop1695_TuneCP5_13TeV-powheg-pythia8"                  : xsecDict["tW_nofullyhad"],
+                    "ST_tW_top_5f_NoFullyHadronicDecays_mtop1715_TuneCP5_PSweights_13TeV-powheg-pythia8"        : xsecDict["tW_nofullyhad"],
+                    "ST_tW_top_5f_NoFullyHadronicDecays_mtop1715_TuneCP5_13TeV-powheg-pythia8"                  : xsecDict["tW_nofullyhad"],
+                    "ST_tW_top_5f_NoFullyHadronicDecays_mtop1735_TuneCP5_PSweights_13TeV-powheg-pythia8"        : xsecDict["tW_nofullyhad"],
+                    "ST_tW_top_5f_NoFullyHadronicDecays_mtop1735_TuneCP5_13TeV-powheg-pythia8"                  : xsecDict["tW_nofullyhad"],
+                    "ST_tW_top_5f_NoFullyHadronicDecays_mtop1755_TuneCP5_PSweights_13TeV-powheg-pythia8"        : xsecDict["tW_nofullyhad"],
+                    "ST_tW_top_5f_NoFullyHadronicDecays_mtop1755_TuneCP5_13TeV-powheg-pythia8"                  : xsecDict["tW_nofullyhad"],
+
+                    "ST_tW_top_5f_inclusiveDecays_TuneCP5down_13TeV-powheg-pythia8"                             : xsecDict["tW_inclusive"],
+                    "ST_tW_top_5f_inclusiveDecays_TuneCP5up_13TeV-powheg-pythia8"                               : xsecDict["tW_inclusive"],
+                    "ST_tW_top_5f_inclusiveDecays_TuneCP5up_PSweights_13TeV-powheg-pythia8"                     : xsecDict["tW_inclusive"],
+                    "ST_tW_top_5f_inclusiveDecays_TuneCP5down_PSweights_13TeV-powheg-pythia8"                   : xsecDict["tW_inclusive"],
+                    "ST_tW_antitop_5f_inclusiveDecays_TuneCP5down_13TeV-powheg-pythia8"                         : xsecDict["tW_inclusive"],
+                    "ST_tW_antitop_5f_inclusiveDecays_TuneCP5up_13TeV-powheg-pythia8"                           : xsecDict["tW_inclusive"],
+                    "ST_tW_antitop_5f_inclusiveDecays_TuneCP5up_PSweights_13TeV-powheg-pythia8"                 : xsecDict["tW_inclusive"],
+                    "ST_tW_antitop_5f_inclusiveDecays_TuneCP5down_PSweights_13TeV-powheg-pythia8"               : xsecDict["tW_inclusive"],
+                    "ST_tW_antitop_5f_DS_inclusiveDecays_TuneCP5_PSweights_13TeV-powheg-pythia8"                : xsecDict["tW_inclusive"],
+                    "ST_tW_top_5f_DS_inclusiveDecays_TuneCP5_PSweights_13TeV-powheg-pythia8"                    : xsecDict["tW_inclusive"],
+                    "ST_tW_DS_antitop_5f_inclusiveDecays_TuneCP5_13TeV-powheg-pythia8"                          : xsecDict["tW_inclusive"],
+                    "ST_tW_DS_top_5f_inclusiveDecays_TuneCP5_13TeV-powheg-pythia8"                              : xsecDict["tW_inclusive"],
+                    "ST_tW_antitop_5f_inclusiveDecays_mtop1695_TuneCP5_PSweights_13TeV-powheg-pythia8"          : xsecDict["tW_inclusive"],
+                    "ST_tW_antitop_5f_inclusiveDecays_mtop1715_TuneCP5_PSweights_13TeV-powheg-pythia8"          : xsecDict["tW_inclusive"],
+                    "ST_tW_antitop_5f_inclusiveDecays_mtop1735_TuneCP5_PSweights_13TeV-powheg-pythia8"          : xsecDict["tW_inclusive"],
+                    "ST_tW_antitop_5f_inclusiveDecays_mtop1755_TuneCP5_PSweights_13TeV-powheg-pythia8"          : xsecDict["tW_inclusive"],
+                    "ST_tW_top_5f_inclusiveDecays_mtop1695_TuneCP5_PSweights_13TeV-powheg-pythia8"              : xsecDict["tW_inclusive"],
+                    "ST_tW_top_5f_inclusiveDecays_mtop1715_TuneCP5_PSweights_13TeV-powheg-pythia8"              : xsecDict["tW_inclusive"],
+                    "ST_tW_top_5f_inclusiveDecays_mtop1735_TuneCP5_PSweights_13TeV-powheg-pythia8"              : xsecDict["tW_inclusive"],
+                    "ST_tW_top_5f_inclusiveDecays_mtop1755_TuneCP5_PSweights_13TeV-powheg-pythia8"              : xsecDict["tW_inclusive"],
 }
 
 
@@ -107,7 +347,7 @@ def LaunchCRABTask(tsk):
     from CRABClient.UserUtilities import config
     from CRABClient.JobType       import CMSSWConfig
 
-    print "# Launching CRAB task for sample {d} that is data {isd}, year {y}, for prod. tag {p} using the DBS {dbs} and with options {o}".format(d = sampleName, isd = str(isData), dbs = thedbs, p = productionTag, y = year, o = options)
+    print "\n# Launching CRAB task for sample {d} that is data {isd}, year {y}, for prod. tag {p} using the DBS {dbs} with xsec {xs} and with options {o}".format(d = sampleName, isd = str(isData), dbs = thedbs, p = productionTag, xs = thexsec, y = year, o = options)
     #print "\nsyspath:", sys.path
     #print "\ncwd:", os.getcwd()
     #sys.exit()
@@ -203,36 +443,6 @@ def LaunchCRABTask(tsk):
                                            ## [3]: https://github.com/dmwm/CRABClient/pull/4824
     return
 
-
-def confirm(message = "Do you wish to continue?"):
-    """
-    Ask user to enter y(es) or n(o) (case-insensitive).
-    :return: True if the answer is Y.
-    :rtype: bool
-    """
-    answer = ""
-    while answer not in ["y", "n", "yes", "no"]:
-        answer = raw_input(message + " [Y/N]\n").lower()
-    return answer[0] == "y"
-
-
-def CheckExistanceOfFolders(listoftasks):
-    listoftaskswcreatedfolder = []
-    for tsk in listoftasks:
-        if os.path.isdir("./" + tsk[3] + "/crab_" + tsk[0] + '_' + tsk[1] + ("_" + tsk[2]) * (tsk[2] != "")): listoftaskswcreatedfolder.append(tsk)
-
-    return listoftaskswcreatedfolder
-
-
-def KillAndErase(tsk):
-    print "### Task with folder", "crab_" + tsk[0] + '_' + tsk[1] + ("_" + tsk[2]) * (tsk[2] != "")
-    print "# Killing..."
-    os.system("crab kill -d ./{wa}/{fl}".format(wa = tsk[3], fl = "crab_" + tsk[0] + '_' + tsk[1] + ("_" + tsk[2]) * (tsk[2] != "")))
-    print "# Erasing..."
-    os.system("rm -rf ./{wa}/{fl}".format(wa = tsk[3], fl = "crab_" + tsk[0] + '_' + tsk[1] + ("_" + tsk[2]) * (tsk[2] != "")))
-    return
-
-
 def ReadLines(path):
     lines = []
     f = open(path, 'r')
@@ -271,14 +481,8 @@ def SubmitDatasets(pathtofile, isTest = False, prodName = 'prodTest', doPretend 
         print 'Opening path: ', pathtofile, ('(DATA)' if isData else "(MC)")
 
     for line in ReadLines(pathtofile):
-        #cfgName = GetName_cfg(line, isData)
-        print 'line = ', line
-        if verbose:
-            #print 'Creating cfg file for dataset: ', line
-            print '%s!! year = %s, options = %s'%('Data' if isData else 'MC', year, options)
-
         workarea = "./temp_postproc_" + prodName
-        if not os.path.isdir(workarea):
+        if not os.path.isdir(workarea) and not doPretend:
             os.mkdir(workarea)
 
         if not isData:

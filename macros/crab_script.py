@@ -26,7 +26,6 @@ PrefCorr2017 = lambda: PrefCorr(jetroot    = "L1prefiring_jetpt_2017BtoF.root", 
 
 print "> Setting parameters..."
 ### SKIM
-cut = '((nElectron + nMuon) >= 2) || (nGenDressedLepton >= 2)'
 
 ### SLIM FILE
 slimfilein  = "SlimFileIn.txt"
@@ -48,6 +47,12 @@ if any([el not in argdict for el in minargs]):
 
 isData = int(argdict["isData"])
 year   = int(argdict["year"])
+
+cut = ""
+if not isData:
+    cut = '((nElectron + nMuon) >= 2) || (nGenDressedLepton >= 2)'
+else:
+    cut = '((nElectron + nMuon) >= 2)'
 
 compatibleyears = [5, 2016, 2017, 2018]
 if year not in compatibleyears:
@@ -75,6 +80,7 @@ mod = []
 
 # Reconst. lepton skim
 print "\t- Adding skim in reconstructed leptons properties."
+skimRecoLeps = lambda : skipNRecoLeps(isData)
 mod.append(skimRecoLeps())
 
 
