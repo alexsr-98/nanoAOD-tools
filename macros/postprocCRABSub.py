@@ -342,8 +342,8 @@ def GuessYear(path):
 
 
 def GetRequestName(d, tn, wa):
-    if len(wa + "_" + tn + "_".join(d.split("/")[:-1])) < 100:
-        return wa + "_" + tn + "_".join(d.split("/")[1:-1])
+    if len(wa + "_" + tn + "_" + "_".join(d.split("/")[:-1])) < 100:
+        return wa + "_" + tn + "_" + "_".join(d.split("/")[1:-1])
 
     elif len((wa + "_" + tn + "_" + d.split("/")[1] + "_XX" + d.split("/")[2][(len(d.split("/")[2]) - (99 - 4 - len(tn) - len(wa) - len(d.split("/")[1]))):])) >= 100:
         return (wa + "_" + tn + "_" + (d.split("/")[1])[:24] + "XX_XX" + d.split("/")[2][(len(d.split("/")[2]) - (99 - 6 - len(tn) - len(wa) - 24)):])
