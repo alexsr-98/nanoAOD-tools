@@ -354,7 +354,7 @@ def GetRequestName(d, tn, wa):
 
 #configurationCache = {}
 def LaunchCRABTask(tsk):
-    sampleName, isData, productionTag, year, thexsec, options, thedbs, test, pretend = tsk
+    sampleName, isData, productionTag, year, thexsec, options, thedbs, test, username, pretend, verbose = tsk
     from CRABAPI.RawCommand       import crabCommand
     from CRABClient.UserUtilities import config
     from CRABClient.JobType       import CMSSWConfig
@@ -366,10 +366,16 @@ def LaunchCRABTask(tsk):
     #print "\ncwd:", os.getcwd()
     #sys.exit()
 
-    outputdir = '/store/user/rodrigvi/nanoAOD_postprocessing/' + productionTag
+    outputdir = "/store/user/" + username + "/nanoAOD_postprocessing/" + productionTag
     inFiles   = ['./crab_script.py', '../scripts/haddnano.py', './SlimFileIn.txt', './SlimFileOut.txt']
     lumimask  = ""
     workarea  = "temp_postproc_" + productionTag
+
+    if verbose:
+        print "\toutputdir:", outputdir
+        print "\tinfiles:", inFiles
+        print "\tworkarea:", workarea
+
     craboptions = "year:" + str(year)
     if options != "":
         craboptions += "," + options
@@ -479,7 +485,7 @@ def ReadLines(path):
 
 
 def SubmitDatasets(pathtofile, isTest = False, prodName = 'prodTest', doPretend = False,
-                   options = '', outTier = 'T2_ES_IFCA', verbose = False):
+                   options = '', outTier = 'T2_ES_IFCA', username = "rodrigvi", verbose = False):
     pathtofile = CheckPathDataset(pathtofile)
     if (pathtofile == ''):
         raise RuntimeError('FATAL: file with datasets not found')
@@ -511,7 +517,7 @@ def SubmitDatasets(pathtofile, isTest = False, prodName = 'prodTest', doPretend 
             else:
                 thexsec = xsecDictExtended[line.split("/")[1]]
 
-        LaunchCRABTask( (line, isData, prodName, year, thexsec, options, theDBS, isTest, doPretend) )
+        LaunchCRABTask( (line, isData, prodName, year, thexsec, options, theDBS, isTest, username, doPretend, verbose) )
     print "\n> All tasks submitted!"
     return
 
@@ -527,16 +533,18 @@ if __name__ == '__main__':
     parser.add_argument('--prodName', '-n', default = ''           , help = 'Give a name to your production')
     parser.add_argument('--options' , '-o', default = ''           , help = 'Options to pass to your producer')
     parser.add_argument('--outTier'       , default = 'T2_ES_IFCA' , help = 'Your output tier')
+    parser.add_argument('--username', "-u", default = 'rodrigvi'   , help = 'Your CERN username')
     parser.add_argument('file'            , default = ''           , nargs='?', help = 'txt file with datasets')
 
-    args   = parser.parse_args()
+    args        = parser.parse_args()
     verbose     = args.verbose
     doPretend   = args.pretend
     dotest      = args.test
-    sampleName = args.dataset
+    sampleName  = args.dataset
     prodName    = args.prodName
     options     = args.options
     outTier     = args.outTier
+    username    = args.username
     fname       = args.file
     doDataset   = False if sampleName == '' else True
     year        = int(args.year)
@@ -559,5 +567,5 @@ if __name__ == '__main__':
             #os.rename(cfgName, prodName + '/' + cfgName)
             ##os.remove(cfgName)
     #else:
-    SubmitDatasets(fname, dotest, prodName, doPretend, options, outTier, verbose)
+    SubmitDatasets(fname, dotest, prodName, doPretend, options, outTier, username, verbose)
 
