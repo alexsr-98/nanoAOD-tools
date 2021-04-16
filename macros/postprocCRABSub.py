@@ -340,14 +340,28 @@ def GuessYear(path):
     return
 
 
+
+def GetRequestName(d, tn, wa):
+    if len(wa + "_" + tn + "_".join(d.split("/")[:-1])) < 100:
+        return wa + "_" + tn + "_".join(d.split("/")[1:-1])
+
+    elif len((wa + "_" + tn + "_" + d.split("/")[1] + "_XX" + d.split("/")[2][(len(d.split("/")[2]) - (99 - 4 - len(tn) - len(wa) - len(d.split("/")[1]))):])) >= 100:
+        return (wa + "_" + tn + "_" + (d.split("/")[1])[:24] + "XX_XX" + d.split("/")[2][(len(d.split("/")[2]) - (99 - 6 - len(tn) - len(wa) - 24)):])
+
+    else:
+        return (wa + "_" + tn + "_" + d.split("/")[1] + "_XX" + d.split("/")[2][(len(d.split("/")[2]) - (99 - 4 - len(tn) - len(wa) - len(d.split("/")[1]))):])
+
+
 #configurationCache = {}
 def LaunchCRABTask(tsk):
-    sampleName, isData, productionTag, year, thexsec, options, thedbs, pretend = tsk
+    sampleName, isData, productionTag, year, thexsec, options, thedbs, test, pretend = tsk
     from CRABAPI.RawCommand       import crabCommand
     from CRABClient.UserUtilities import config
     from CRABClient.JobType       import CMSSWConfig
 
-    print "\n# Launching CRAB task for sample {d} that is data {isd}, year {y}, for prod. tag {p} using the DBS {dbs} with xsec {xs} and with options {o}".format(d = sampleName, isd = str(isData), dbs = thedbs, p = productionTag, xs = thexsec, y = year, o = options)
+    print "\n# Launching CRAB task for sample {d} that is data {isd}, year {y}, for prod. tag {p} using the DBS {dbs} with xsec {xs}".format(d = sampleName, isd = str(isData), dbs = thedbs, p = productionTag, xs = thexsec, y = year) + ((" and with options " + options) if len(options) else "")
+    if test:
+        print "\t- This is a test submission! Only THREE (3) files will be processed!"
     #print "\nsyspath:", sys.path
     #print "\ncwd:", os.getcwd()
     #sys.exit()
@@ -393,7 +407,11 @@ def LaunchCRABTask(tsk):
     def submit(config):
         res = crabCommand('submit', config = config )
 
-    config.General.requestName  = productionTag + "_" + sampleName[0:min([70, len(sampleName)])].replace("/", "_")
+    reqnam = GetRequestName(sampleName, GetTimeNow(), productionTag)
+    #reqnam  = productionTag + "_" + sampleName[0:min([70, len(sampleName)])].replace("/", "_")
+    print "\t- Using as request name:", reqnam
+
+    config.General.requestName  = reqnam
     config.General.workArea     = workarea
     config.General.transferLogs = True
 
@@ -412,7 +430,8 @@ def LaunchCRABTask(tsk):
     #config.Data.splitting   = 'Automatic'
     config.Data.unitsPerJob = 1
     config.Data.publication = False
-    config.Data.totalUnits  = 3
+    if test:
+        config.Data.totalUnits  = 3
     config.Data.allowNonValidInputDataset = True
 
     config.Data.outLFNDirBase = outputdir
@@ -478,7 +497,7 @@ def SubmitDatasets(pathtofile, isTest = False, prodName = 'prodTest', doPretend 
         theDBS = "phys03"
 
     if verbose:
-        print 'Opening path: ', pathtofile, ('(DATA)' if isData else "(MC)")
+        print '> Opening samples file: ', pathtofile, ('(DATA)' if isData else "(MC)")
 
     for line in ReadLines(pathtofile):
         workarea = "./temp_postproc_" + prodName
@@ -492,7 +511,8 @@ def SubmitDatasets(pathtofile, isTest = False, prodName = 'prodTest', doPretend 
             else:
                 thexsec = xsecDictExtended[line.split("/")[1]]
 
-        LaunchCRABTask( (line, isData, prodName, year, thexsec, options, theDBS, doPretend) )
+        LaunchCRABTask( (line, isData, prodName, year, thexsec, options, theDBS, isTest, doPretend) )
+    print "\n> All tasks submitted!"
     return
 
 
