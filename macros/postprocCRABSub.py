@@ -371,10 +371,6 @@ def LaunchCRABTask(tsk):
     lumimask  = ""
     workarea  = "temp_postproc_" + productionTag
 
-    if verbose:
-        print "\toutputdir:", outputdir
-        print "\tinfiles:", inFiles
-        print "\tworkarea:", workarea
 
     craboptions = "year:" + str(year)
     if options != "":
@@ -409,6 +405,10 @@ def LaunchCRABTask(tsk):
 
         inFiles.append("./lumijson/" + lumijson)
 
+    if verbose:
+        print "\t- outputdir:", outputdir
+        print "\t- infiles:",   inFiles
+        print "\t- workarea:",  workarea
     config = config()
     def submit(config):
         res = crabCommand('submit', config = config )
