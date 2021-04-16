@@ -318,4 +318,4 @@ if __name__ == '__main__':
             del pool
         else:
             for job in withfailedlist: ResubmitCRABTask(job)
-        print "> All tasks resubmitted."
+        print "\n> All tasks resubmitted.\n"
