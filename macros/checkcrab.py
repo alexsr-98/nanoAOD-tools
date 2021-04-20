@@ -264,10 +264,10 @@ if __name__ == '__main__':
             "nfail"   : nfail,
             "ntot"    : ntot
         }
-        if   job[1] == "SUBMITFAILED" or job[1] == "torelaunch":
+        if   job[1] == "SUBMITFAILED" or job[1] == "torelaunch" or job[1] == "KILLED":
             crabdir = job[0].split("/")[-1]
             if verbose:
-                print "# Task of CRAB directory", crabdir, "with SUBMITFAILED server status: adding to relaunching list."
+                print "# Task of CRAB directory", crabdir, "with SUBMITFAILED or KILLED server status or tagged for relaunch due to corrupt or failed submission: adding to relaunching list."
             relaunchinglist.append(job[0])
         elif job[1] == "NEWoncommandSUBMIT":
             crabdir = job[0].split("/")[-1]

@@ -10,7 +10,7 @@
 ### tW
 # tW nominal inclusiva
 #### PERDIDO /ST_tW_antitop_5f_inclusiveDecays_TuneCP5_PSweights_13TeV-powheg-pythia8/schoef-TopNanoAODv6-1-2-6_2017-a11761155c05d04d6fed5a2401fa93e8/USER
-#### PERDIDO /ST_tW_top_5f_inclusiveDecays_TuneCP5_PSweights_13TeV-powheg-pythia8/schoef-TopNanoAODv6-1-2-3_2017-a11761155c05d04d6fed5a2401fa93e8/USER
+#### PERDIDO /ST_tW_top_5f_inclusiveDecays_TuneCP5_PSweights_13TeV-powheg-pythia8/schoef-TopNanoAODv6-1-2-3_2017-a11761155c05d04d6fed5a2401fZZTOa93e8/USER
 /ST_tW_top_5f_inclusiveDecays_TuneCP5_PSweights_13TeV-powheg-pythia8/piedavid-TopNanoAODv6-1-1_2017-a11761155c05d04d6fed5a2401fa93e8/USER                   ### NO COMPLETO, NO USAR SALVO NECESIDAD
 
 # tW nominal nofullyhad
@@ -37,7 +37,7 @@
 ### ttV
 # ttZ
 /TTZToLLNuNu_M-10_TuneCP5_13TeV-amcatnlo-pythia8/piedavid-TopNanoAODv6-1-1_2017-a11761155c05d04d6fed5a2401fa93e8/USER
-/TTZToLL_M-1to10_TuneCP5_13TeV-amcatnlo-pythia8/piedavid-TopNanoAODv6-1-2-3_2017-a11761155c05d04d6fed5a2401fa93e8/USER
+/TTZToLL_M-1to10_TuneCP5_13TeV-amcatnlo-pythia8/piedavid-TopNanoAODv6-1-1_2017-a11761155c05d04d6fed5a2401fa93e8/USER
 /TTZToQQ_TuneCP5_13TeV-amcatnlo-pythia8/piedavid-TopNanoAODv6-1-1_2017-a11761155c05d04d6fed5a2401fa93e8/USER
 
 # ttW
@@ -63,7 +63,7 @@
 
 # ZZ
 /ZZTo2L2Nu_13TeV_powheg_pythia8/piedavid-TopNanoAODv6-1-1_2017-a11761155c05d04d6fed5a2401fa93e8/USER                                         ### NO COMPLETO, NO USAR SALVO NECESIDAD
-/ZZTo2L2Q_13TeV_amcatnloFXFX_madspin_pythia8/schoef-TopNanoAODv6-1-2-3_2017-a11761155c05d04d6fed5a2401fa93e8/USER
+/ZZTo2L2Q_13TeV_amcatnloFXFX_madspin_pythia8/piedavid-TopNanoAODv6-1-1_2017-a11761155c05d04d6fed5a2401fa93e8/USER
 /ZZTo4L_13TeV_powheg_pythia8/piedavid-TopNanoAODv6-1-1_2017-a11761155c05d04d6fed5a2401fa93e8/USER
 
 
