@@ -4,7 +4,6 @@
 
 # semilep
 /TTToSemiLeptonic_TuneCP5_13TeV-powheg-pythia8/swertz-TopNanoAODv6p1_2018-0d1d4920f08f56d048ece029b873a2cc/USER
-/TTToSemiLeptonic_TuneCP5_13TeV-powheg-pythia8/swertz-TopNanoAODv6-1-1_2018-0d1d4920f08f56d048ece029b873a2cc/USER ## NO COMPLETO, NO USAR SALVO NECESIDAD
 
 ### tW
 # nominal inclusiva
@@ -82,11 +81,3 @@
 ### ttW
 #/TTWJetsToLNu_TuneCP5CR1_QCDbased_13TeV-amcatnloFXFX-madspin-pythia8/piedavid-TopNanoAODv6-1-2_2018-0d1d4920f08f56d048ece029b873a2cc/USER
 #/TTWJetsToLNu_TuneCP5CR2_GluonMove_13TeV-amcatnloFXFX-madspin-pythia8/piedavid-TopNanoAODv6-1-2_2018-0d1d4920f08f56d048ece029b873a2cc/USER
-
-### ttGamma
-#### PERDIDO #/TTGamma_Dilept_TuneCP5Up_13TeV-madgraph-pythia8/schoef-TopNanoAODv6-1-2-3_2018-0d1d4920f08f56d048ece029b873a2cc/USER
-#### PERDIDO #/TTGamma_Dilept_TuneCP5Down_13TeV-madgraph-pythia8/schoef-TopNanoAODv6-1-2-3_2018-0d1d4920f08f56d048ece029b873a2cc/USER
-#### PERDIDO #/TTGamma_Dilept_TuneCP5_erdON_13TeV-madgraph-pythia8/schoef-TopNanoAODv6-1-2-3_2018-0d1d4920f08f56d048ece029b873a2cc/USER
-#### PERDIDO #/TTGamma_SingleLept_TuneCP5_erdON_13TeV-madgraph-pythia8/schoef-TopNanoAODv6-1-2-3_2018-0d1d4920f08f56d048ece029b873a2cc/USER
-#### PERDIDO #/TTGamma_SingleLept_TuneCP5Up_13TeV-madgraph-pythia8/schoef-TopNanoAODv6-1-2-3_2018-0d1d4920f08f56d048ece029b873a2cc/USER
-#### PERDIDO #/TTGamma_SingleLept_TuneCP5Down_13TeV-madgraph-pythia8/schoef-TopNanoAODv6-1-2-3_2018-0d1d4920f08f56d048ece029b873a2cc/USER
