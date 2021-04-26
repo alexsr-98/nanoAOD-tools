@@ -102,6 +102,7 @@ if not isData:
     xsecTagMod = lambda : xsecTagger(float(argdict["xsec"]))
     mod.append(xsecTagMod())
 
+#### FIXME: add year
 
 if not isData:
     print "\t- Adding PU and (if required) prefire correction weights."

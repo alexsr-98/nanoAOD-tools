@@ -153,6 +153,7 @@ def RelaunchCRABTask(crabdirpath, verbose):
 def ResubmitCRABTask(crabdirpath):
     print "> Resubmitting CRAB task with directory path", crabdirpath + "..."
     os.system("crab resubmit -d {d}".format(d = crabdirpath))
+    #os.system("crab resubmit -d {d} --maxjobruntime 2750".format(d = crabdirpath))
 
     return
 

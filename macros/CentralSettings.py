@@ -560,7 +560,11 @@ def LaunchCRABTask(tsk):
     config.Data.outLFNDirBase = outputdir
     config.Data.inputDataset  = sampleName
     config.Data.lumiMask      = lumimask
-    config.Data.outputDatasetTag = productionTag + "_" + sampleName[0:min([70, len(sampleName)])].replace("/", "_")
+
+
+    #config.Data.outputDatasetTag = productionTag + "_" + sampleName[0:min([70, len(sampleName)])].replace("/", "_") #### TODO: FIXXXXXXXX
+    config.Data.outputDatasetTag = sampleName.split("/")[2]  ## fix???
+
 
     config.Site.storageSite = 'T2_ES_IFCA'
     #config.Site.storageSite = 'T2_CH_CERN'
