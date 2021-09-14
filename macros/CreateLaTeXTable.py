@@ -19,8 +19,9 @@ def ReadLines(path):
 
 
 def GetEntriesDAS(tsk):
-    sample, verbose = tsk
-    dascommand = 'dasgoclient --query="summary dataset=%s"'%sample
+    sample, verbose, dbs = tsk
+    dascommand = 'dasgoclient --query="summary dataset={s} {d}"'.format(s = sample,
+                                                                        d = "" if not dbs else "instance=prod/phys03")
     if verbose: print '   - Looking for sample: ', sample
     out     = os.popen(dascommand).read()
     d       = ast.literal_eval(out)[0]
@@ -54,6 +55,7 @@ if __name__ == '__main__':
     parser.add_argument('--test',      '-t', action  = 'store_true',  help = 'Sends only one or two jobs, as a test')
     parser.add_argument('--outfolder', '-o', default = 'temp_tables', help = 'Directory where the output should be put')
     parser.add_argument('--nthreads',  '-j', metavar = 'nthreads'  ,  dest = "nthreads", required = False, default = 0, type = int)
+    parser.add_argument('--dbs',       '-d', action  = 'store_true',  default = False, help = 'Use phys03 dbs.')
     parser.add_argument('dataset',           default = ''          ,  nargs='?', help = 'txt file with datasets')
 
     args = parser.parse_args()
@@ -62,7 +64,8 @@ if __name__ == '__main__':
     dataset   = args.dataset
     nthreads  = args.nthreads
     outfolder = args.outfolder
-    tasks     = [ (el, verbose) for el in cs.ReadLines(dataset)]
+    dbs       = args.dbs
+    tasks     = [ (el, verbose, dbs) for el in cs.ReadLines(dataset)]
 
     print "> Checking nevents and xsecs..."
     finalresults = []

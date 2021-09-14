@@ -9,7 +9,7 @@ drop IsoTrack*
 drop L1Reco*
 drop L1simulation*
 drop OtherPV*
-drop RawMET*
+
 drop SV*
 drop SoftActivity*
 drop SubGen*

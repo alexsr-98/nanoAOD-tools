@@ -177,8 +177,8 @@ class PostProcessor:
             self.hcount.SetBinContent(1, nEntries)
             if inTree.GetBranchStatus("genWeight"):
                 inTree.Project("SumWeightsTemp", "1.0", "genWeight")
-                self.hsumofweights.SetBinContent(1,
-                                                 ROOT.gROOT.FindObject("SumWeightsTemp").Integral())
+                self.hsumweights.SetBinContent(1,
+                                               ROOT.gROOT.FindObject("SumWeightsTemp").Integral())
             #### ========
 
             # pre-skimming
