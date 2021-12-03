@@ -124,7 +124,8 @@ if not isData:
     JECJERuncsMod = createJMECorrector(dataYear      = year,
                                        jesUncert     = "All",
                                        metBranchName = "MET" if (year != 2017) else "METFixEE2017",
-                                       splitJER      = True,)
+                                       splitJER      = True,
+                                       applyHEMfix   = True,)
     mod.append(JECJERuncsMod())
 
     if   year == 2016:
