@@ -65,7 +65,7 @@ if __name__ == '__main__':
     username    = args.username
     fname       = args.file
     doDataset   = False if sampleName == '' else True
-    year        = int(args.year)
+    year        = args.year
 
 
     SubmitDatasets(fname, dotest, prodName, doPretend, options, outTier, username, verbose)
