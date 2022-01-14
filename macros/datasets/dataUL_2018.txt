@@ -1,22 +1,22 @@
-#SingleMuon
+# SingleMuon
 /SingleMuon/Run2018A-UL2018_MiniAODv2_NanoAODv9-v1/NANOAOD # AOD perdido
 /SingleMuon/Run2018B-UL2018_MiniAODv2_NanoAODv9-v2/NANOAOD
 /SingleMuon/Run2018C-UL2018_MiniAODv2_NanoAODv9-v2/NANOAOD # nanoAOD perdido
 /SingleMuon/Run2018D-UL2018_MiniAODv2_NanoAODv9-v1/NANOAOD
 
-#SingleElectron
+# SingleElectron
 /EGamma/Run2018A-UL2018_MiniAODv2_NanoAODv9-v1/NANOAOD
 /EGamma/Run2018B-UL2018_MiniAODv2_NanoAODv9-v1/NANOAOD # AOD perdido
 /EGamma/Run2018C-UL2018_MiniAODv2_NanoAODv9-v1/NANOAOD
 /EGamma/Run2018D-UL2018_MiniAODv2_NanoAODv9-v3/NANOAOD # AOD y nanoAOD perdido
 
-#MuonEG
+# MuonEG
 /MuonEG/Run2018A-UL2018_MiniAODv2_NanoAODv9-v1/NANOAOD
 /MuonEG/Run2018B-UL2018_MiniAODv2_NanoAODv9-v1/NANOAOD # AOD perdido
 /MuonEG/Run2018C-UL2018_MiniAODv2_NanoAODv9-v1/NANOAOD
 /MuonEG/Run2018D-UL2018_MiniAODv2_NanoAODv9-v1/NANOAOD # miniAOD perdido
 
-#DoubleMuon
+# DoubleMuon
 /DoubleMuon/Run2018A-UL2018_MiniAODv2_NanoAODv9-v1/NANOAOD # AOD perdido
 /DoubleMuon/Run2018B-UL2018_MiniAODv2_NanoAODv9-v1/NANOAOD
 /DoubleMuon/Run2018C-UL2018_MiniAODv2_NanoAODv9-v1/NANOAOD
