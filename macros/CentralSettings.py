@@ -11,7 +11,9 @@ all_data_dataset_groups = ["SingleMuon", "DoubleMuon", "SingleElectron", "Double
 xsecDict = {"DY_M0to50"       : 106300.0,
             "DY_M10to50"      : 22635.09,
             "DY_M50"          : 6025.2,
-            "DY_2J"           : 361.4,          # NLO
+            "DY_0J"           : 5129.0,         # NLO+PS XSDB
+            "DY_1J"           : 951.5,          # NLO+PS XSDB
+            "DY_2J"           : 361.4,          # NLO+PS XSDB
 
             "WWbb_bb4l"       : 52.54,          # NLO
 
@@ -96,6 +98,8 @@ xsecDictExtended = {"ST_tW_antitop_5f_NoFullyHadronicDecays_TuneEE5C_13TeV-powhe
                     "DYJetsToLL_M-50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8"                       : xsecDict["DY_M50"],
                     "DYJetsToLL_M-50_TuneCP5_13TeV-amcatnloFXFX-pythia8"                            : xsecDict["DY_M50"],
                     "DYJetsToLL_M-50_TuneCP5_13TeV-madgraphMLM-pythia8"                             : xsecDict["DY_M50"],
+                    "DYJetsToLL_0J_TuneCP5_13TeV-amcatnloFXFX-pythia8"                              : xsecDict["DY_0J"],
+                    "DYJetsToLL_1J_TuneCP5_13TeV-amcatnloFXFX-pythia8"                              : xsecDict["DY_1J"],
                     "DYJetsToLL_2J_TuneCP5_13TeV-amcatnloFXFX-pythia8"                              : xsecDict["DY_2J"],
 
                     "b_bbar_4l_TuneCP5_13TeV-powheg-pythia8"                                        : xsecDict["WWbb_bb4l"],
