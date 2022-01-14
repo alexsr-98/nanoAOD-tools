@@ -587,7 +587,8 @@ def LaunchCRABTask(tsk):
     config.Data.splitting = "EventAwareLumiBased"
 #    config.Data.unitsPerJob = 1
     #config.Data.unitsPerJob = 200000
-    config.Data.unitsPerJob = 200000
+    #config.Data.unitsPerJob = 200000
+    config.Data.unitsPerJob = 300000
 #    config.Data.totalUnits = 200000
     config.Data.publication = False
     if test:
