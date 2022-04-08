@@ -208,7 +208,10 @@ class PostProcessor:
                     inTree.SetEntryList(elist)
             else:
                 # initialize reader
-                inTree = InputTree(inTree, elist)
+                if elist:
+                    inTree = InputTree(inTree, elist)
+                else:
+                    inTree = InputTree(inTree)
 
             # prepare output file
             if not self.noOut:
