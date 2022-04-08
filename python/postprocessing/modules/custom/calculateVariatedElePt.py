@@ -3,7 +3,8 @@ import ROOT as r
 
 class calculateVariatedElePt( Module ):
     def __init__(self, isd):
-        self._thestr  = "scale" if isd else "sigma"
+        self._thestr = "scale" if isd else "sigma"
+        self.emass   = 0.0005109989461
 
     def beginJob(self):
         pass
@@ -23,7 +24,7 @@ class calculateVariatedElePt( Module ):
         outup = []; outdn = [];
         for iE in range(ev.nElectron):
             tmpelec = r.TLorentzVector()
-            tmpelec.SetPtEtaPhiM(ev.Electron_pt[iE], ev.Electron_eta[iE], ev.Electron_phi[iE], ev.Electron_mass[iE])
+            tmpelec.SetPtEtaPhiM(ev.Electron_pt[iE], ev.Electron_eta[iE], ev.Electron_phi[iE], self.emass)
             outup.append(r.TMath.Sqrt( (tmpelec.E() + getattr(ev, "Electron_dE" + self._thestr + "Up")[iE] )**2   - tmpelec.Pz()**2))
             outdn.append(r.TMath.Sqrt( (tmpelec.E() + getattr(ev, "Electron_dE" + self._thestr + "Down")[iE] )**2 - tmpelec.Pz()**2))
 

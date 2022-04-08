@@ -92,7 +92,7 @@ def GetInfoFromCRABLog(logpath):
             copyoftmpstrings = deepcopy(tmpstrings)
             for subel in tmpstrings:
                 if   "year" in subel:
-                    year    = int(subel.split(":")[-1])
+                    year    = subel.split(":")[-1]
                     copyoftmpstrings.remove(subel)
                 elif "isData" in subel:
                     isData  = int(subel.split(":")[-1])
@@ -132,7 +132,7 @@ def RelaunchCRABTask(crabdirpath, verbose):
         print "\t* sample:\t "     , sample
         print "\t* isdata:\t "     , isdata
         print "\t* prodtag:\t "    , prodtag
-        print "\t* year:\t\t "     , year
+        print "\t* year:\t\t "     , str(year)
         print "\t* xsec:\t\t "     , xs
         print "\t* options:\t "    , opts
         print "\t* dbs:\t\t "      , dbs
@@ -146,14 +146,15 @@ def RelaunchCRABTask(crabdirpath, verbose):
     os.system("rm -rf " + crabdirpath)
 
     print "# Relaunching task..."
-    cs.LaunchCRABTask( (sample, isdata, prodtag, year, xs, opts, dbs, test, username, False, verbose) )
+    cs.LaunchCRABTask( (sample, isdata, prodtag, str(year), xs, opts, dbs, test, username, False, verbose) )
     return
 
 
 def ResubmitCRABTask(crabdirpath):
     print "> Resubmitting CRAB task with directory path", crabdirpath + "..."
-    os.system("crab resubmit -d {d}".format(d = crabdirpath))
+#    os.system("crab resubmit -d {d}".format(d = crabdirpath))
     #os.system("crab resubmit -d {d} --maxjobruntime 2750 --siteblacklist T2_BR_SPRACE,T2_US_Wisconsin,T1_RU_JINR,T2_RU_JINR,T2_EE_Estonia".format(d = crabdirpath))
+    os.system("crab resubmit -d {d} --maxjobruntime 2750".format(d = crabdirpath))
 
     return
 
@@ -206,6 +207,8 @@ if __name__ == '__main__':
     parser.add_argument('--verbose' , '-v', dest = "verbose",     action = 'store_true', default = False, help = 'Activate the verbosing')
     parser.add_argument('--ncores ' , '-j', dest = "ncores",      default = 1, type = int, help = 'Use some threads')
     parser.add_argument('--username', "-u", default = 'rodrigvi', help = 'Your CERN username')
+    parser.add_argument('--no-relaunch', "-nl", dest = "norel", default = False, action = 'store_true', help = 'If you want to relaunch or not')
+    parser.add_argument('--auto-resub', "-ar", dest = "autores", default = False, action = 'store_true', help = 'If you want to always resubmit or not')
     parser.add_argument(dest = "production", default = ''       , nargs='?', help = 'production')
 
     args        = parser.parse_args()
@@ -213,6 +216,8 @@ if __name__ == '__main__':
     ncores      = args.ncores
     verbose     = args.verbose
     cernuname   = args.username
+    notRelaunch = args.norel
+    autoRes     = args.autores
     
     if len(sys.argv) == 1: raise RuntimeError("FATAL: no folder given to check.")
 
@@ -393,11 +398,12 @@ if __name__ == '__main__':
         sys.exit()
 
     print "\nThere are a total of", len(relaunchinglist), "tasks marked for relaunching and", len(withfailedlist), "tasks marked for resubmitting.\n"
-    if not cs.confirm():
-        print ""
-        sys.exit()
+    if not autoRes:
+        if not cs.confirm():
+            print ""
+            sys.exit()
 
-    if len(relaunchinglist) != 0:
+    if len(relaunchinglist) != 0 and not notRelaunch:
         print "\n>  Initiating relaunch (this is not parallelised)..."
         for job in relaunchinglist: RelaunchCRABTask(job, verbose)
         print "\n> All tasks relaunched."

@@ -582,18 +582,22 @@ def LaunchCRABTask(tsk):
     config.JobType.sendPythonFolder = True
 
     config.Data.inputDBS    = thedbs
-#    config.Data.splitting   = 'FileBased'
 #    config.Data.splitting   = 'Automatic'
-    config.Data.splitting = "EventAwareLumiBased"
-#    config.Data.unitsPerJob = 1
-    #config.Data.unitsPerJob = 200000
-    #config.Data.unitsPerJob = 200000
-    config.Data.unitsPerJob = 300000
-#    config.Data.totalUnits = 200000
+    #if sampleName != "/DYJetsToLL_M-50_TuneCP5_13TeV-madgraphMLM-pythia8/RunIISummer20UL17NanoAODv9-106X_mc2017_realistic_v9-v1/NANOAODSIM":
+        #config.Data.splitting = "EventAwareLumiBased"
+        ##config.Data.unitsPerJob = 200000
+        ##config.Data.unitsPerJob = 200000
+        #config.Data.unitsPerJob = 300000
+    ##    config.Data.totalUnits = 200000
+    #else:
+        #config.Data.splitting   = 'FileBased'
+        #config.Data.unitsPerJob = 1
+    config.Data.splitting   = 'FileBased' ################## NEVER CHANGE FOR NANOAOD POSTPROCESSING
+    config.Data.unitsPerJob = 1
     config.Data.publication = False
-    if test:
-        config.Data.totalUnits  = 2
-        config.Data.unitsPerJob = 20000
+#    if test:
+#        config.Data.totalUnits  = 2
+#        config.Data.unitsPerJob = 20000
 
     config.Data.allowNonValidInputDataset = True
 
@@ -601,10 +605,7 @@ def LaunchCRABTask(tsk):
     config.Data.inputDataset  = sampleName
     config.Data.lumiMask      = lumiMask
 
-
-    #config.Data.outputDatasetTag = productionTag + "_" + sampleName[0:min([70, len(sampleName)])].replace("/", "_") #### TODO: FIXXXXXXXX
-    config.Data.outputDatasetTag = sampleName.split("/")[2]  ## fix???
-
+    config.Data.outputDatasetTag = sampleName.split("/")[2]
 
     config.Site.storageSite = 'T2_ES_IFCA'
     #config.Site.storageSite = 'T2_CH_CERN'
@@ -623,8 +624,8 @@ def LaunchCRABTask(tsk):
 
     del config
     #CMSSWConfig.configurationCache.clear() #### NOTE: this is done in order to allow the parallelised CRAB job submission. For further
-                                           ## information, please check the code on [1], the commit of [2] and the discussion of [3].
-                                           ## [1]: https://github.com/dmwm/CRABClient/blob/master/src/python/CRABClient/JobType/CMSSWConfig.py
-                                           ## [2]: https://github.com/dmwm/CRABClient/commit/a50bfc2d1f32093b76ba80956ee6c5bd6d61259e
-                                           ## [3]: https://github.com/dmwm/CRABClient/pull/4824
+                                            ## information, please check the code on [1], the commit of [2] and the discussion of [3].
+                                            ## [1]: https://github.com/dmwm/CRABClient/blob/master/src/python/CRABClient/JobType/CMSSWConfig.py
+                                            ## [2]: https://github.com/dmwm/CRABClient/commit/a50bfc2d1f32093b76ba80956ee6c5bd6d61259e
+                                            ## [3]: https://github.com/dmwm/CRABClient/pull/4824
     return
