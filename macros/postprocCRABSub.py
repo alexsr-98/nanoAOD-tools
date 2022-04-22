@@ -47,7 +47,6 @@ if __name__ == '__main__':
     parser.add_argument('--pretend' , '-p', action = 'store_true'  , help = 'Create the files but not send the jobs')
     parser.add_argument('--test'    , '-t', action = 'store_true'  , help = 'Sends only one or two jobs, as a test')
     parser.add_argument('--dataset' , '-d', default = ''           , help = 'Submit jobs to run on a given dataset')
-    parser.add_argument('--year'    , '-y', default = 0            , help = 'Year')
     parser.add_argument('--prodName', '-n', default = ''           , help = 'Give a name to your production')
     parser.add_argument('--options' , '-o', default = ''           , help = 'Options to pass to your producer')
     parser.add_argument('--outTier'       , default = 'T2_ES_IFCA' , help = 'Your output tier')
@@ -65,7 +64,6 @@ if __name__ == '__main__':
     username    = args.username
     fname       = args.file
     doDataset   = False if sampleName == '' else True
-    year        = args.year
 
 
     SubmitDatasets(fname, dotest, prodName, doPretend, options, outTier, username, verbose)

@@ -15,15 +15,15 @@ xsecDict = {"DY_M0to50"       : 106300.0,
             "DY_1J"           : 951.5,          # NLO+PS XSDB
             "DY_2J"           : 361.4,          # NLO+PS XSDB
 
-            "WWbb_bb4l"       : 52.54,          # NLO
+            "WWbb_bb4l"       : 52.54,          # NLO+PS
 
             "ttbar_dilep"     : 88.28769753,    # NNLO
             "ttbar_semilep"   : 365.3994209,    # NNLO
             "ttbar_inclusive" : 831.76,         # NNLO
 
-            "tW_inclusive"    : 35.85,          # NNLO
-            "tW_dileptonic"   : 38.9348208,     # NNLO
-            "tW_nofullyhad"   : 19.4674104,     # NNLO
+            "tW_inclusive"    : 35.85,          # aNNLO
+            "tW_dileptonic"   : 7.8081,         # aNNLO
+            "tW_nofullyhad"   : 19.4674104,     # aNNLO
 
             "ttW_lep"         : 0.2043,
             "ttW_ewkNLO_lep"  : 0.491,
