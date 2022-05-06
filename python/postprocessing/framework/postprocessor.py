@@ -199,6 +199,11 @@ class PostProcessor:
                 inAddTree = inAddFiles[-1].Get("Events")
                 if inAddTree is None:
                     inAddTree = inAddFiles[-1].Get("Friends")
+                else:
+                    try:
+                        dummyval = inAddTree.GetName()
+                    except:
+                        inAddTree = inAddFiles[-1].Get("Friends")
                 inAddTrees.append(inAddTree)
                 inTree.AddFriend(inAddTree)
 
