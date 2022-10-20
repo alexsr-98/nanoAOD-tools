@@ -126,6 +126,7 @@ xsecDictExtended = {"ST_tW_antitop_5f_NoFullyHadronicDecays_TuneEE5C_13TeV-powhe
                     "TTWJetsToLNu_TuneCP5_PSweights_13TeV-amcatnloFXFX-madspin-pythia8"             : xsecDict["ttW_lep"],
                     "TTWJetsToLNu_TuneCP5_13TeV-amcatnloFXFX-madspin-pythia8"                       : xsecDict["ttW_lep"],
                     "TTWJetsToLNu_EWK_5f_NLO"                                                       : xsecDict["ttW_ewkNLO_lep"],
+                    "ttWJetsToLNu_5f_EWK_TuneCP5_13TeV_amcatnlo-pythia8"                            : xsecDict["ttW_ewkNLO_lep"],
                     "TTWJetsToQQ_TuneCUETP8M1_13TeV-amcatnloFXFX-madspin-pythia8"                   : xsecDict["ttW_had"],
                     "TTWJetsToQQ_TuneCP5_13TeV-amcatnloFXFX-madspin-pythia8"                        : xsecDict["ttW_had"],
 
@@ -153,17 +154,20 @@ xsecDictExtended = {"ST_tW_antitop_5f_NoFullyHadronicDecays_TuneEE5C_13TeV-powhe
                     "WWToLNuQQ_NNPDF31_TuneCP5_PSweights_13TeV-powheg-pythia8"                      : xsecDict["WW_lnuqq"],
                     "WWTo1L1Nu2Q_13TeV_amcatnloFXFX_madspin_pythia8"                                : xsecDict["WW_lnuqq"],
                     "WWTo1L1Nu2Q_TuneCP5_13TeV-amcatnloFXFX-pythia8"                                : xsecDict["WW_lnuqq"],
+                    "WWTo1L1Nu2Q_4f_TuneCP5_13TeV-amcatnloFXFX-pythia8"                             : xsecDict["WW_lnuqq"],
 
                     "WZ_TuneCP5_13TeV-pythia8"                                                      : xsecDict["WZ"],
                     "WZTo1L1Nu2Q_TuneCP5_13TeV_amcatnloFXFX_madspin_pythia8"                        : xsecDict["WZ_lnu2q"],
                     "WZTo1L1Nu2Q_TuneCP5_13TeV-amcatnloFXFX-pythia8"                                : xsecDict["WZ_lnu2q"],
                     "WZTo1L1Nu2Q_13TeV_amcatnloFXFX_madspin_pythia8"                                : xsecDict["WZ_lnu2q"],
                     "WZToLNu2Q_13TeV_powheg_pythia8"                                                : xsecDict["WZ_lnu2q"],
+                    "WZTo1L1Nu2Q_4f_TuneCP5_13TeV-amcatnloFXFX-pythia8"                             : xsecDict["WZ_lnu2q"],
                     "WZTo2L2Q_13TeV_amcatnloFXFX_madspin_pythia8"                                   : xsecDict["WZ_2l2q"],
                     "WZTo2Q2L_mllmin4p0_TuneCP5_13TeV-amcatnloFXFX-pythia8"                         : xsecDict["WZ_2l2q_mllmin4p0"],
                     "WZTo3LNu_TuneCUETP8M1_13TeV-powheg-pythia8"                                    : xsecDict["WZ_3lnu"],
                     "WZTo3LNu_13TeV-powheg-pythia8"                                                 : xsecDict["WZ_3lnu"],
                     "WZTo3LNu_TuneCP5_13TeV-powheg-pythia8"                                         : xsecDict["WZ_3lnu"],
+                    "WZTo3LNu_TuneCP5_13TeV-amcatnloFXFX-pythia8"                                   : xsecDict["WZ_3lnu"],
                     "WZTo3LNu_mllmin01_NNPDF31_TuneCP5_13TeV_powheg_pythia8"                        : xsecDict["WZ_3lnu_mllmin01"],
 
                     "ZZ_TuneCP5_13TeV-pythia8"                                                      : xsecDict["ZZ"],

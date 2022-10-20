@@ -154,6 +154,7 @@ def ResubmitCRABTask(crabdirpath):
     print "> Resubmitting CRAB task with directory path", crabdirpath + "..."
 #    os.system("crab resubmit -d {d}".format(d = crabdirpath))
 #    os.system("crab resubmit -d {d} --maxjobruntime 2750 --siteblacklist T2_BR_SPRACE,T2_US_Wisconsin,T1_RU_JINR,T2_RU_JINR,T2_EE_Estonia,T1_UK_RAL".format(d = crabdirpath))
+#    os.system("crab resubmit -d {d} --maxjobruntime 2750 --siteblacklist T2_FR_GRIF_LLR".format(d = crabdirpath))
     os.system("crab resubmit -d {d} --maxjobruntime 2750".format(d = crabdirpath))
 
     return
