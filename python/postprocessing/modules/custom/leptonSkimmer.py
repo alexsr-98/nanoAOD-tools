@@ -24,7 +24,7 @@ class leptonSkimmer(Module):
 
     def analyze(self, ev):
         if self.isd:
-            return (ev.nLepGood >= 2 or ev.nLepGoodelscaleUp >= 2 or ev.nLepGoodelscaleDown >= 2)
+            return (ev.nLepGood >= 2)# or ev.nLepGoodelscaleUp >= 2 or ev.nLepGoodelscaleDown >= 2)
         else:
             thegenleps = Collection(ev, 'GenDressedLepton')
             nlepgengood = 0
@@ -32,5 +32,5 @@ class leptonSkimmer(Module):
                 if iL.pt > self.minpt and abs(iL.eta) < self.maxeta:
                     nlepgengood += 1
 
-            return ((ev.nLepGood >= 2 or ev.nLepGoodelsigmaUp >= 2 or ev.nLepGoodelsigmaDown >= 2)
+            return ((ev.nLepGood >= 2) # or ev.nLepGoodelsigmaUp >= 2 or ev.nLepGoodelsigmaDown >= 2)
                     or (nlepgengood >= 2))

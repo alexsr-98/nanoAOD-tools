@@ -1,3 +1,4 @@
+from random import sample
 import ROOT as r
 import os, sys, argparse
 
@@ -77,6 +78,8 @@ def hadd(rootfiles, outname, index, outdir, totsize = None, pretend = False, for
 
 
 def sortByiF(fnam):
+    if "_Skim" in fnam:
+        fnam = fnam.replace("_Skim", "")
     return int(fnam.split("/")[-1].split(".root")[0].split("_")[-1])
 
 
@@ -168,24 +171,25 @@ def CraftSampleName(name):
 def GetSamplesForHadding(thef, outdirname, verbose = True):
     dirnames    = []
     samplenames = []
+    
     for path, subdirs, _ in os.walk(thef):
 #        print path, subdirs
         for treeName in subdirs:
+            
             if treeName == outdirname: continue
             for spath, ssubdirs, _ in os.walk(thef + "/" + treeName):
-                for streeName in ssubdirs:
-                    dirName    = spath + '/' + streeName
-                    sampleName = CraftSampleName(treeName + "/" + streeName)
-                    dirnames.append(dirName)
-                    samplenames.append(sampleName)
+                dirName    = spath + '/' 
+                sampleName = CraftSampleName(treeName + "/" )
+                dirnames.append(dirName)
+                samplenames.append(sampleName)
                     
-                    if verbose >= 1: print ' >> Found sample: ' + pcol.red + treeName + pcol.white + ' (' + pcol.cyan + sampleName + pcol.white + ')' + pcol.end
+                if verbose >= 1: print ' >> Found sample: ' + pcol.red + treeName + pcol.white + ' (' + pcol.cyan + sampleName + pcol.white + ')' + pcol.end
                 break
         break
     return [dirnames, samplenames]
 
 
-def haddThoseDatasets(inf, outdirname, pretend = False, maxSize = 5000., verbose = False):
+def haddThoseDatasets(inf, outdirname, pretend = False, maxSize = 5000., verbose = False, removeInfolder=False):
     dirnames, samplenames = GetSamplesForHadding(inf, outdirname, verbose)
 #    sys.exit()
     if not pretend:
@@ -198,6 +202,12 @@ def haddThoseDatasets(inf, outdirname, pretend = False, maxSize = 5000., verbose
     if verbose:
         print "> Samples that have been merged:"
         for el in samplenames: print el
+    
+    if removeInfolder:
+        for el in dirnames:
+            os.system("rm " + el + "/" + "*.root")
+            os.system("rmdir " + el)
+    
     return
 
 
@@ -209,6 +219,7 @@ parser.add_argument('--verbose',  '-v', action  = 'store_true',  help = 'Activat
 parser.add_argument('--pretend',  '-p', action  = 'store_true',  help = 'Pretend')
 parser.add_argument('--outname',  '-o', default = 'mergedFiles', help = 'Output name')
 parser.add_argument('--maxSize',  '-s', default = 5000.,         help = 'Maximum input size of the chunks to merge (in bytes)')
+parser.add_argument('--removeInfolder',  '-rm', action  = 'store_true',         help = 'Remove the folders with the unmerged files')
 
 args = parser.parse_args()
 
@@ -217,8 +228,8 @@ verbose    = args.verbose
 pretend    = args.pretend
 outname    = args.outname
 maxSize    = float(args.maxSize)
+removeInfolder = args.removeInfolder
 
 
-
-haddThoseDatasets(infolder, outname, pretend, maxSize, verbose)
+haddThoseDatasets(infolder, outname, pretend, maxSize, verbose, removeInfolder)
    

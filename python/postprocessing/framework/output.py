@@ -170,7 +170,7 @@ class FullOutput(OutputTree):
         self._tree.Fill()
 
     def write(self):
-        if not self._keepFriendLinks: self._unlinkFriends()
+        #if not self._keepFriendLinks: self._unlinkFriends()
         if self.outputbranchSelection:
             self.outputbranchSelection.selectBranches(self._tree)
         self._tree = self.tree().CopyTree('1', "",
