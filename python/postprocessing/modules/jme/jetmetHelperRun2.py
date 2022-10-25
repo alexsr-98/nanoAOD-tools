@@ -16,6 +16,7 @@ jecTagsMC = {
     'UL2016': 'Summer19UL16_V7_MC',
     'UL2017': 'Summer19UL17_V5_MC',
     'UL2018': 'Summer19UL18_V5_MC',
+    '2022': 'Winter22Run3_V2_MC',
 }
 
 jecTagsFastSim = {
@@ -32,7 +33,8 @@ archiveTagsDATA = {
     'UL2016_preVFP': 'Summer19UL16APV_V7_DATA',
     'UL2016': 'Summer19UL16_V7_DATA',
     'UL2017': 'Summer19UL17_V5_DATA',
-    'UL2018': 'Summer19UL18_V5_DATA'
+    'UL2018': 'Summer19UL18_V5_DATA',
+    '2022': 'Summer19UL18_V5_DATA',
 }
 
 jecTagsDATA = {
@@ -80,6 +82,7 @@ jerTagsMC = {
     'UL2016': 'Summer20UL16_JRV3_MC',
     'UL2017': 'Summer19UL17_JRV2_MC',
     'UL2018': 'Summer19UL18_JRV2_MC',
+    '2022' : 'JR_Winter22Run3_V1_MC',
 }
 
 # jet mass resolution: https://twiki.cern.ch/twiki/bin/view/CMS/JetWtagging
@@ -93,6 +96,7 @@ jmrValues = {
     'UL2016': [1.00, 1.00, 1.00],  # placeholder
     'UL2017': [1.00, 1.00, 1.00],  # placeholder
     'UL2018': [1.00, 1.00, 1.00],  # placeholder
+    '2022' :  [1.00, 1.00, 1.00],  # placeholder
 }
 
 # jet mass scale
@@ -107,6 +111,7 @@ jmsValues = {
     'UL2016': [1.000, 1.000, 1.000],  # placeholder
     'UL2017': [1.000, 1.000, 1.000],  # placeholder
     'UL2018': [1.000, 1.000, 1.000],  # placeholder
+    '2022': [1.000, 1.000, 1.000],  # placeholder
 }   
 
 
