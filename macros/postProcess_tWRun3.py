@@ -3,7 +3,10 @@ print("> Beginning postProcess_tWRun3.py")
 import os, sys, json, argparse
 from PhysicsTools.NanoAODTools.postprocessing.framework.postprocessor import *
 
+from PhysicsTools.NanoAODTools.postprocessing.modules.common.muonScaleResProducer import muonScaleResProducer
+
 from PhysicsTools.NanoAODTools.postprocessing.modules.custom.leptonSkimmer     import leptonSkimmer ### lo he modificado, hay que devolverlo a lo original
+from PhysicsTools.NanoAODTools.postprocessing.modules.custom.datasetName      import datasetNamer
 from PhysicsTools.NanoAODTools.postprocessing.modules.custom.dataTagger       import dataTagger
 from PhysicsTools.NanoAODTools.postprocessing.modules.custom.xsecTagger       import xsecTagger
 from PhysicsTools.NanoAODTools.postprocessing.modules.custom.yearTagger       import yearTagger
@@ -26,7 +29,6 @@ if __name__ == "__main__":
     xsec = float(args.xsec) # cross section of the process to which the files belong
     outputPath     = args.outputPath # output path where the output files will be stored
     
-    print(isData)
     
     ### SLIM FILE
     slimfilein  = "SlimFileIn.txt"
@@ -55,10 +57,10 @@ if __name__ == "__main__":
     mod = []
 
     # Muon scale (Rochester), to be implemented
-    #if year == 2018:
-    #    muonScaleRes2018 = lambda: muonScaleResProducer('roccor.Run2.v5',
-    #                                                'RoccoR2018UL.txt', 2018)
-    #    mod.append(muonScaleRes2018())
+    if year == 2022:
+        muonScaleRes2022 = lambda: muonScaleResProducer('',
+                                                    '', 2022)
+        mod.append(muonScaleRes2022())
       
     # Propagate unc. in electron scale and energy to pt
     ##print("\t- Propagate electron energy (either scale or resolution) corrections to pT.")
@@ -86,7 +88,7 @@ if __name__ == "__main__":
         "etasc_be" : 1.479,
     }
 
-    muonID = lambda l : ( abs(l.eta) < IDDict["muons"]["eta"] and l.pt > IDDict["muons"]["pt"] and l.pfRelIso04_all < IDDict["muons"]["isorelpf"]
+    muonID = lambda l : ( abs(l.eta) < IDDict["muons"]["eta"] and l.corrected_pt > IDDict["muons"]["pt"] and l.pfRelIso04_all < IDDict["muons"]["isorelpf"]
                           and l.tightId == 1 ) # l.corrected_pt antes estaba esto en lugar de l.pt
 
     elecID = lambda l : ( (abs(l.eta) < IDDict["elecs"]["eta2"] and (abs(l.eta) < IDDict["elecs"]["eta0"] or abs(l.eta) > IDDict["elecs"]["eta1"]) )
@@ -135,8 +137,8 @@ if __name__ == "__main__":
                                                 selector = dict(Muon = muonID_lepenDn, Electron = elecID))
 
     mod.append(lepMerge())
-    #mod.append(lepMerge_muenUp())
-    #mod.append(lepMerge_muenDn())
+    mod.append(lepMerge_muenUp())
+    mod.append(lepMerge_muenDn())
 
     if isData:
         lepMerge_elscaleUp = lambda : collectionMerger(input = ["Electron", "Muon"],
@@ -162,6 +164,11 @@ if __name__ == "__main__":
     print("\t- Adding skim in reconstructed leptons properties.")
     detailedSkim = lambda : leptonSkimmer(isData)
     mod.append(detailedSkim())
+
+    # Dataset name
+    print("\t- Adding dataset name branch.")
+    datasetNameMod = lambda : datasetNamer(name)
+    mod.append(datasetNameMod())
 
     # Data or MC tag
     print("\t- Adding data tag.")
