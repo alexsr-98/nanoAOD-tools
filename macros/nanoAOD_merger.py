@@ -218,7 +218,7 @@ parser.add_argument('--infolder', '-i', required = True,         help = 'Path to
 parser.add_argument('--verbose',  '-v', action  = 'store_true',  help = 'Activate the verbosing')
 parser.add_argument('--pretend',  '-p', action  = 'store_true',  help = 'Pretend')
 parser.add_argument('--outname',  '-o', default = 'mergedFiles', help = 'Output name')
-parser.add_argument('--maxSize',  '-s', default = 5000.,         help = 'Maximum input size of the chunks to merge (in bytes)')
+parser.add_argument('--maxSize',  '-s', default = 500.,         help = 'Maximum input size of the chunks to merge (in bytes)')
 parser.add_argument('--removeInfolder',  '-rm', action  = 'store_true',         help = 'Remove the folders with the unmerged files')
 
 args = parser.parse_args()

@@ -4,8 +4,9 @@ import os, sys, json, argparse
 from math import ceil
 
 #### Modify as you wish
-production = "test"
-outPath = "/pool/phedexrw/userstorage/asoto/Proyectos/tw_run3/productions/" + production + "/{year}/"
+production = "2022-10-25"
+outPath = "/beegfs/data/nanoAODv9/temp/postprocv10Run3/tw_run3/productions/" + production + "/{year}/"
+#outPath = "/pool/phedexrw/userstorage/asoto/Proyectos/tw_run3/productions/" + production + "/{year}/"
 logPath = outPath + "logs/"
 jobName = "postProcess_twRun3"
 #######################
