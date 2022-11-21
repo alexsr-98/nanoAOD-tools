@@ -50,7 +50,7 @@ if __name__ == "__main__":
     ### Set golden json
     jsonfile = None
     if year == "2022" and isData:
-        jsonfile = '/nfs/fanae/user/cvico/WorkSpace/wz-run3/CMSSW_10_4_0/src/CMGTools/TTHAnalysis/cfg/Cert_Collisions2022_355100_357900_Golden.json'    
+        jsonfile = '/nfs/fanae/user/cvico/WorkSpace/wz-run3/release/CMSSW_10_4_0/src/CMGTools/TTHAnalysis/cfg/Cert_Collisions2022_355100_360491_Golden.json'    
 
     
     ### Set up the modules
