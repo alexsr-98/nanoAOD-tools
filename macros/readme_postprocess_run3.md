@@ -1,6 +1,6 @@
 # Postprocess Run3
 
-Last updated: **24 Oct 2022**
+Last updated: **21 Nov 2022**
 
 (Documentation work in progress)
 
@@ -15,4 +15,8 @@ List of important files:
 Steps to run the post processing:
  
  * python postProcessHelper.py -f mc_2022 -q batch -j 120
- * python nanoAOD_merger.py -i /pool/phedex/userstorage/asoto/Proyectos/tw_run3/productions/test/  -v -o ./ -rm 
+ * python nanoAOD_merger.py -i /beegfs/data/nanoAODv9/temp/postprocv10Run3/tw_run3/productions/2022-10-25/2022/  -v -o ./ -rm
+
+ Important things to take into account:
+
+ * Always review that the correct json file is being used.
