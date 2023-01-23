@@ -47,7 +47,21 @@ muon_Run2022E = {
   "files": glob.glob(nanoPath + "Muon/31oct2022_Muon_Run2022E-PromptNanoAODv10_v1-v3/*/*/*root"),
   "isData": True,
   "name" : "Muon_Run2022E", #name for the output files
-}  
+}
+muon_Run2022F = {
+  "xsec": 1.0,
+  "year": "2022",
+  "files": glob.glob(nanoPath + "Muon/data2022F_28nov2022_Muon_Run2022F-PromptNanoAODv10_v1-v2/*/*/*root"),
+  "isData": True,
+  "name" : "Muon_Run2022F", #name for the output files
+}    
+muon_Run2022G = {
+  "xsec": 1.0,
+  "year": "2022",
+  "files": glob.glob(nanoPath + "Muon/run2022G_9dec2022_Muon_Run2022G-PromptNanoAODv10_v1-v1/*/*/*root"),
+  "isData": True,
+  "name" : "Muon_Run2022G", #name for the output files
+} 
 
 #-------EGamma-------# 
 eGamma_Run2022C = {
@@ -77,6 +91,20 @@ eGamma_Run2022E = {
   "files": glob.glob(nanoPath + "EGamma/data22EF_26oct2022_EGamma_Run2022E-PromptNanoAODv10_v1-v2/*/*/*root"),
   "isData": True,
   "name" : "EGamma_Run2022E", #name for the output files
+}
+eGamma_Run2022F = {
+  "xsec": 1.0,
+  "year": "2022",
+  "files": glob.glob(nanoPath + "EGamma/data2022F_28nov2022_EGamma_Run2022F-PromptNanoAODv10_v1-v2/221201_133821/*/*root"),
+  "isData": True,
+  "name" : "EGamma_Run2022F", #name for the output files
+}
+eGamma_Run2022G = {
+  "xsec": 1.0,
+  "year": "2022",
+  "files": glob.glob(nanoPath + "EGamma/run2022G_9dec2022_EGamma_Run2022G-PromptNanoAODv10_v1-v1/*/*/*root"),
+  "isData": True,
+  "name" : "EGamma_Run2022G", #name for the output files
 }
 
 #-------MuonEG-------# 
@@ -108,5 +136,19 @@ muonEG_Run2022E = {
   "isData": True,
   "name" : "MuonEG_Run2022E", #name for the output files
 }
+muonEG_Run2022F = {
+  "xsec": 1.0,
+  "year": "2022",
+  "files": glob.glob(nanoPath + "MuonEG/data2022F_28nov2022_MuonEG_Run2022F-PromptNanoAODv10_v1-v2/*/*/*root"),
+  "isData": True,
+  "name" : "MuonEG_Run2022F", #name for the output files
+}
+muonEG_Run2022G = {
+  "xsec": 1.0,
+  "year": "2022",
+  "files": glob.glob(nanoPath + "MuonEG/run2022G_9dec2022_MuonEG_Run2022G-PromptNanoAODv10_v1-v1/*/*/*root"),
+  "isData": True,
+  "name" : "MuonEG_Run2022G", #name for the output files
+}
 
-samples = [doubleMuon, singleMuon, muon_Run2022C, muon_Run2022D, muon_Run2022D_v1_v1, eGamma_Run2022C, eGamma_Run2022D, eGamma_Run2022D_v1_v1, muonEG_Run2022C, muonEG_Run2022D, muonEG_Run2022D_v1_v1, eGamma_Run2022E, muon_Run2022E, muonEG_Run2022E]
+samples = [doubleMuon, singleMuon, muon_Run2022C, muon_Run2022D, muon_Run2022D_v1_v1, eGamma_Run2022C, eGamma_Run2022D, eGamma_Run2022D_v1_v1, muonEG_Run2022C, muonEG_Run2022D, muonEG_Run2022D_v1_v1, eGamma_Run2022E, muon_Run2022E, muonEG_Run2022E, muonEG_Run2022F, eGamma_Run2022F, muon_Run2022F, muonEG_Run2022G, eGamma_Run2022G, muon_Run2022G]
