@@ -15,6 +15,7 @@ List of important files:
 Steps to run the post processing:
  
  * python postProcessHelper.py -f mc_2022 -q batch -j 120
+ * Note: always run: python problemChecker.py -f data_2022 -o /beegfs/data/nanoAODv9/temp/postprocv10Run3/tw_run3/productions/2023-01-24_forData_removeLater/2022/
  * python nanoAOD_merger.py -i /beegfs/data/nanoAODv9/temp/postprocv10Run3/tw_run3/productions/2022-10-25/2022/  -v -o ./ -rm
 
  Important things to take into account:
