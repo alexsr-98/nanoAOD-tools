@@ -43,10 +43,14 @@ class jetmetUncertaintiesProducer(Module):
         self.splitJER = splitJER
         if self.splitJER:
             self.splitJERIDs = list(range(6))
+
+            #### MODIFYING TO ADD TOTAL JER ALSO WHENEVER JER SPLITTING IS ASKED FOR
+            self.splitJERIDs.append("")
+            ####
         else:
             self.splitJERIDs = [""]  # "empty" ID for the overall JER
         self.metBranchName = metBranchName
-        self.rhoBranchName = "fixedGridRhoFastjetAll"
+        self.rhoBranchName = "Rho_fixedGridRhoFastjetAll" ## updated to work with NanoV10
         # --------------------------------------------------------------------
         # CV: globalTag and jetType not yet used in the jet smearer, as there
         # is no consistent set of txt files for JES uncertainties and JER scale
@@ -97,10 +101,13 @@ class jetmetUncertaintiesProducer(Module):
         # Text files are now tarred so must extract first into temporary
         # directory (gets deleted during python memory management at
         # script exit)
+        
         self.jesArchive = tarfile.open(
             self.jesInputArchivePath + globalTag +
             ".tgz", "r:gz") if not archive else tarfile.open(
                 self.jesInputArchivePath + archive + ".tgz", "r:gz")
+
+
         self.jesInputFilePath = tempfile.mkdtemp()
         self.jesArchive.extractall(self.jesInputFilePath)
 
@@ -110,7 +117,7 @@ class jetmetUncertaintiesProducer(Module):
         if len(jesUncertainties) == 1 and jesUncertainties[0] == "Total":
             self.jesUncertaintyInputFileName = globalTag + "_Uncertainty_" + jetType + ".txt"
         elif jesUncertainties[0] == "Merged" and not self.isData:
-            self.jesUncertaintyInputFileName = "Regrouped_" + \
+            self.jesUncertaintyInputFileName = "RegroupedV2_" + \
                 globalTag + "_UncertaintySources_" + jetType + ".txt"
         else:
             self.jesUncertaintyInputFileName = globalTag + \
@@ -132,11 +139,12 @@ class jetmetUncertaintiesProducer(Module):
         # Define the jet recalibrator
         self.jetReCalibrator = JetReCalibrator(
             globalTag,
-            jetType,
-            True,
+	    jetType,
+	    True,
             self.jesInputFilePath,
             calculateSeparateCorrections=False,
-            calculateType1METCorrection=False)
+            calculateType1METCorrection=False,
+            isData = self.isData)
 
         # Define the recalibrator for level 1 corrections only
         self.jetReCalibratorL1 = JetReCalibrator(
@@ -146,7 +154,8 @@ class jetmetUncertaintiesProducer(Module):
             self.jesInputFilePath,
             calculateSeparateCorrections=True,
             calculateType1METCorrection=False,
-            upToLevel=1)
+            upToLevel=1,
+            isData = self.isData)
 
         # Define the recalibrators for GT used in nanoAOD production
         # (only needed to reproduce 2017 v2 MET)
@@ -157,7 +166,8 @@ class jetmetUncertaintiesProducer(Module):
                 True,
                 self.jesInputFilePath,
                 calculateSeparateCorrections=False,
-                calculateType1METCorrection=False)
+                calculateType1METCorrection=False,
+                isData = self.isData)
             self.jetReCalibratorProdL1 = JetReCalibrator(
                 globalTagProd,
                 jetType,
@@ -165,6 +175,7 @@ class jetmetUncertaintiesProducer(Module):
                 self.jesInputFilePath,
                 calculateSeparateCorrections=True,
                 calculateType1METCorrection=False,
+                isData = self.isData,
                 upToLevel=1)
         else:
             self.jetReCalibratorProd = False
@@ -618,6 +629,14 @@ class jetmetUncertaintiesProducer(Module):
                 jet_mass_jerUp[thisJERID] = jet_pt_jerUpVal * jet_mass
                 jet_mass_jerDown[thisJERID] = jet_pt_jerDownVal * jet_mass
 
+                #### MODIFYING TO ADD TOTAL JER ALSO WHENEVER JER SPLITTING IS ASKED FOR
+                if self.splitJER:
+                    jet_pt_jerUp[""]     = jet_pt_jerUpVal   * jet_pt
+                    jet_pt_jerDown[""]   = jet_pt_jerDownVal * jet_pt
+                    jet_mass_jerUp[""]   = jet_pt_jerUpVal   * jet_mass
+                    jet_mass_jerDown[""] = jet_pt_jerDownVal * jet_mass
+                ####
+
                 # evaluate JES uncertainties
                 jet_pt_jesUp = {}
                 jet_pt_jesDown = {}
@@ -762,6 +781,12 @@ class jetmetUncertaintiesProducer(Module):
                                 if jerID == self.getJERsplitID(
                                         jet_pt_nom, jet.eta):
                                     jerUpVal, jerDownVal = jet_pt_jerUpVal, jet_pt_jerDownVal
+
+                                #### MODIFYING TO ADD TOTAL JER ALSO WHENEVER JER SPLITTING IS ASKED FOR
+                                elif (jerID == "") and self.splitJER:
+                                    jerUpVal, jerDownVal = jet_pt_jerUpVal, jet_pt_jerDownVal
+                                ####
+
                                 met_T1Smear_px_jerUp[
                                     jerID] = met_T1Smear_px_jerUp[jerID] - (
                                         jet_pt_L1L2L3 * jerUpVal -
@@ -865,10 +890,15 @@ class jetmetUncertaintiesProducer(Module):
             (met_T1_px_unclEnDown, met_T1_py_unclEnDown) = (met_T1_px, met_T1_py)
             (met_T1Smear_px_unclEnUp, met_T1Smear_py_unclEnUp) = (met_T1Smear_px, met_T1Smear_py)
             (met_T1Smear_px_unclEnDown, met_T1Smear_py_unclEnDown) = (met_T1Smear_px, met_T1Smear_py)
-            met_deltaPx_unclEn = getattr(
-                event, self.metBranchName + "_MetUnclustEnUpDeltaX")
-            met_deltaPy_unclEn = getattr(
-                event, self.metBranchName + "_MetUnclustEnUpDeltaY")
+
+
+            met_deltaPx_unclEn = 0 
+            met_deltaPy_unclEn = 0 
+            if self.metBranchName == "MET":
+                met_deltaPx_unclEn = getattr(
+                    event, self.metBranchName + "_MetUnclustEnUpDeltaX")
+                met_deltaPy_unclEn = getattr(
+                    event, self.metBranchName + "_MetUnclustEnUpDeltaY")
             met_T1_px_unclEnUp = met_T1_px_unclEnUp + met_deltaPx_unclEn
             met_T1_py_unclEnUp = met_T1_py_unclEnUp + met_deltaPy_unclEn
             met_T1_px_unclEnDown = met_T1_px_unclEnDown - met_deltaPx_unclEn

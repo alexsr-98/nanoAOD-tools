@@ -118,11 +118,11 @@ class fatJetUncertaintiesProducer(Module):
         # jet mass scale
         self.jmsVals = jmsVals
         if not self.jmsVals:
-            print(
+            print((
                 "WARNING: jmsVals is empty!!! Using default values! This "
                 + "module will soon be deprecated! Please use "
                 + "jetmetHelperRun2 in the future."
-            )
+            ))
             # 2016 values
             self.jmsVals = [1.00, 0.9906, 1.0094]  # nominal, down, up
             # Use 2017 values for 2018 until 2018 are released
@@ -178,7 +178,7 @@ class fatJetUncertaintiesProducer(Module):
                 "libCondFormatsJetMETObjects", "libPhysicsToolsNanoAODTools"
         ]:
             if library not in ROOT.gSystem.GetLibraries():
-                print("Load Library '%s'" % library.replace("lib", ""))
+                print(("Load Library '%s'" % library.replace("lib", "")))
                 ROOT.gSystem.Load(library)
 
     def getJERsplitID(self, pt, eta):
@@ -201,9 +201,9 @@ class fatJetUncertaintiesProducer(Module):
 
     def beginJob(self):
 
-        print("Loading jet energy scale (JES) uncertainties from file '%s'" %
+        print(("Loading jet energy scale (JES) uncertainties from file '%s'" %
               os.path.join(self.jesInputFilePath,
-                           self.jesUncertaintyInputFileName))
+                           self.jesUncertaintyInputFileName)))
         # self.jesUncertainty = ROOT.JetCorrectionUncertainty(os.path.join(self.jesInputFilePath, self.jesUncertaintyInputFileName))
 
         self.jesUncertainty = {}

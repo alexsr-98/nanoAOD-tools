@@ -119,10 +119,10 @@ def _remakeAllReaders(tree):
     _ttreereader = ROOT.TTreeReader(tree, getattr(tree, '_entrylist', ROOT.MakeNullPointer(ROOT.TEntryList)))
     _ttreereader._isClean = True
     _ttrvs = {}
-    for k in tree._ttrvs.keys():
+    for k in list(tree._ttrvs.keys()):
         _ttrvs[k] = ROOT.TTreeReaderValue(tree._leafTypes[k])(_ttreereader, k)
     _ttras = {}
-    for k in tree._ttras.keys():
+    for k in list(tree._ttras.keys()):
         _ttras[k] = ROOT.TTreeReaderArray(tree._leafTypes[k])(_ttreereader, k)
     tree._ttrvs = _ttrvs
     tree._ttras = _ttras

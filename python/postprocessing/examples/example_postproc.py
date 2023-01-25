@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-from exampleModule import *
+from .exampleModule import *
 from PhysicsTools.NanoAODTools.postprocessing.modules.jme.jetmetHelperRun2 import *
 from PhysicsTools.NanoAODTools.postprocessing.modules.jme.jetmetUncertainties import *
 from PhysicsTools.NanoAODTools.postprocessing.framework.postprocessor import PostProcessor

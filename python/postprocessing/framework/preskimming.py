@@ -11,7 +11,7 @@ class JSONFilter:
             self.runsAndLumis = json.load(open(fname, 'r'))
         else:
             self.runsAndLumis = runsAndLumis
-        for _run, lumis in self.runsAndLumis.items():
+        for _run, lumis in list(self.runsAndLumis.items()):
             run = int(_run)
             if run not in self.keep:
                 self.keep[run] = []

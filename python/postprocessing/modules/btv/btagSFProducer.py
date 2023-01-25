@@ -205,7 +205,7 @@ class btagSFProducer(Module):
         # load libraries for accessing b-tag scale factors (SFs) from conditions database
         for library in ["libCondFormatsBTauObjects", "libCondToolsBTau"]:
             if library not in ROOT.gSystem.GetLibraries():
-                print("Load Library '%s'" % library.replace("lib", ""))
+                print(("Load Library '%s'" % library.replace("lib", "")))
                 ROOT.gSystem.Load(library)
 
         # define systematic uncertainties
@@ -289,8 +289,8 @@ class btagSFProducer(Module):
                   "shape_corr": 3}.get(wp.lower(), None)
         if wp_btv is None or wp_btv not in list(self.readers.keys()):
             if self.verbose > 0:
-                print(
-                    "WARNING: Unknown working point '%s', setting b-tagging SF reader to None!" % wp)
+                print((
+                    "WARNING: Unknown working point '%s', setting b-tagging SF reader to None!" % wp))
             return None
         return self.readers[wp_btv]
 
@@ -309,8 +309,8 @@ class btagSFProducer(Module):
             flavor_btv = 2
         else:
             if self.verbose > 0:
-                print(
-                    "WARNING: Unknown flavor '%s', setting b-tagging SF to -1!" % repr(flavor))
+                print((
+                    "WARNING: Unknown flavor '%s', setting b-tagging SF to -1!" % repr(flavor)))
             return -1.
         return flavor_btv
 
@@ -342,8 +342,8 @@ class btagSFProducer(Module):
             # check if SF is OK
             if sf < 0.01:
                 if self.verbose > 0:
-                    print("jet #%i: pT = %1.1f, eta = %1.1f, discr = %1.3f, flavor = %i" % (
-                        idx, pt, eta, discr, flavor_btv))
+                    print(("jet #%i: pT = %1.1f, eta = %1.1f, discr = %1.3f, flavor = %i" % (
+                        idx, pt, eta, discr, flavor_btv)))
                 sf = 1.
             yield sf
 

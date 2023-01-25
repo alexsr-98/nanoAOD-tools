@@ -161,7 +161,7 @@ class FullOutput(OutputTree):
                             _ot.Fill()
                     self._otherTrees[kn] = _ot
             elif k.GetClassName() == "TTree":
-                print("Not copying unknown tree %s" % kn)
+                print(("Not copying unknown tree %s" % kn))
             else:
                 self._otherObjects[kn] = inputFile.Get(kn)
 
@@ -176,9 +176,9 @@ class FullOutput(OutputTree):
                                           self.maxEntries if self.maxEntries else ROOT.TVirtualTreePlayer.kMaxEntries, 0)
 
         OutputTree.write(self)
-        for t in self._otherTrees.values():
+        for t in list(self._otherTrees.values()):
             t.Write()
-        for on, ov in self._otherObjects.items():
+        for on, ov in list(self._otherObjects.items()):
             self._file.WriteTObject(ov, on)
 
 

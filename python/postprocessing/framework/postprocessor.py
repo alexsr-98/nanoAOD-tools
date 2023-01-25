@@ -70,25 +70,25 @@ class PostProcessor:
             % (tmpdir, os.path.basename(fname).replace(".root", ""), rndchars)
         if self.longTermCache and os.path.exists(localfile):
             if verbose:
-                print("Filename %s is already available in local path %s " \
-                    % (fname, localfile))
+                print(("Filename %s is already available in local path %s " \
+                    % (fname, localfile)))
             return localfile, False
         try:
             if verbose:
-                print("Filename %s is remote, will do a copy to local path %s"\
-                    % (fname, localfile))
+                print(("Filename %s is remote, will do a copy to local path %s"\
+                    % (fname, localfile)))
             start = time.time()
             subprocess.check_output(["xrdcp", "-f", "-N", fname, localfile])
             if verbose:
-                print("Time used for transferring the file locally: %.2f s"\
-                    % (time.time() - start))
+                print(("Time used for transferring the file locally: %.2f s"\
+                    % (time.time() - start)))
             return localfile, (not self.longTermCache)
         except:
             if verbose:
                 print("Error: could not save file locally, will run from remote")
             if os.path.exists(localfile):
                 if verbose:
-                    print("Deleting partially transferred file %s" % localfile)
+                    print(("Deleting partially transferred file %s" % localfile))
                 try:
                     os.unlink(localfile)
                 except:
@@ -114,7 +114,7 @@ class PostProcessor:
                     raise RuntimeError("Unsupported compression %s" % algo)
             else:
                 compressionLevel = 0
-            print("Will write selected trees to " + self.outputDir)
+            print(("Will write selected trees to " + self.outputDir))
             if not self.justcount:
                 if not os.path.exists(self.outputDir):
                     os.system("mkdir -p " + self.outputDir)
@@ -170,21 +170,22 @@ class PostProcessor:
             elist, jsonFilter = preSkim(
                 inTree, self.json, self.cut, maxEntries=self.maxEntries, firstEntry=self.firstEntry)
             if self.justcount:
-                print('Would select %d / %d entries from %s (%.2f%%)' % (elist.GetN() if elist else nEntries, nEntries, fname, (elist.GetN() if elist else nEntries) / (0.01 * nEntries) if nEntries else 0))
+                print(('Would select %d / %d entries from %s (%.2f%%)' % (elist.GetN() if elist else nEntries, nEntries, fname, (elist.GetN() if elist else nEntries) / (0.01 * nEntries) if nEntries else 0)))
                 if self.prefetch:
                     if toBeDeleted:
                         os.unlink(ftoread)
                 continue
             else:
-                print('Pre-select %d entries out of %s (%.2f%%)' % (elist.GetN() if elist else nEntries, nEntries, (elist.GetN() if elist else nEntries) / (0.01 * nEntries) if nEntries else 0))
+                print(('Pre-select %d entries out of %s (%.2f%%)' % (elist.GetN() if elist else nEntries, nEntries, (elist.GetN() if elist else nEntries) / (0.01 * nEntries) if nEntries else 0)))
                 inAddFiles = []
                 inAddTrees = []
             for ffname in ffnames:
                 inAddFiles.append(ROOT.TFile.Open(ffname))
                 inAddTree = inAddFiles[-1].Get("Events")
-                if inAddTree is None:
+                if inAddTree == None:
                     inAddTree = inAddFiles[-1].Get("Friends")
                 inAddTrees.append(inAddTree)
+                print(" >> ", inAddTree,  inAddFiles[-1])
                 inTree.AddFriend(inAddTree)
 
             if fullClone:
@@ -230,22 +231,22 @@ class PostProcessor:
 
             # process events, if needed
             if not fullClone:
-                eventRange = range(self.firstEntry, self.firstEntry +
-                                    nEntries) if nEntries > 0 and not elist else None
+                eventRange = list(range(self.firstEntry, self.firstEntry +
+                                    nEntries)) if nEntries > 0 and not elist else None
                 (nall, npass, timeLoop) = eventLoop(
                     self.modules, inFile, outFile, inTree, outTree,
                     eventRange=eventRange, maxEvents=self.maxEntries
                 )
-                print('Processed %d preselected entries from %s (%s entries). Finally selected %d entries' % (nall, fname, nEntries, npass))
+                print(('Processed %d preselected entries from %s (%s entries). Finally selected %d entries' % (nall, fname, nEntries, npass)))
             else:
                 nall = nEntries
-                print('Selected %d / %d entries from %s (%.2f%%)' % (outTree.tree().GetEntries(), nall, fname, outTree.tree().GetEntries() / (0.01 * nall) if nall else 0))
+                print(('Selected %d / %d entries from %s (%.2f%%)' % (outTree.tree().GetEntries(), nall, fname, outTree.tree().GetEntries() / (0.01 * nall) if nall else 0)))
 
             # now write the output
             if not self.noOut:
                 outTree.write()
                 outFile.Close()
-                print("Done %s" % outFileName)
+                print(("Done %s" % outFileName))
             if self.jobReport:
                 self.jobReport.addInputFile(fname, nall)
             if self.prefetch:
@@ -255,7 +256,7 @@ class PostProcessor:
         for m in self.modules:
             m.endJob()
 
-        print("Total time %.1f sec. to process %i events. Rate = %.1f Hz." % ((time.time() - t0), totEntriesRead, totEntriesRead / (time.time() - t0)))
+        print(("Total time %.1f sec. to process %i events. Rate = %.1f Hz." % ((time.time() - t0), totEntriesRead, totEntriesRead / (time.time() - t0))))
 
         if self.haddFileName:
             haddnano = "./haddnano.py" if os.path.isfile(

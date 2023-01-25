@@ -1,7 +1,7 @@
 # Author: Izaak Neutelings (July 2019)
 # https://twiki.cern.ch/twiki/bin/viewauth/CMS/TauIDRecommendationForRun2
 # Source: https://github.com/cms-tau-pog/TauIDSFs
-from __future__ import print_function
+
 import os
 from math import sqrt
 from PhysicsTools.NanoAODTools.postprocessing.tools import ensureTFile, extractTH1

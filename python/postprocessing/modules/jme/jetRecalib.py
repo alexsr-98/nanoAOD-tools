@@ -51,7 +51,7 @@ class jetRecalib(Module):
                 "libCondFormatsJetMETObjects", "libPhysicsToolsNanoAODTools"
         ]:
             if library not in ROOT.gSystem.GetLibraries():
-                print("Load Library '%s'" % library.replace("lib", ""))
+                print(("Load Library '%s'" % library.replace("lib", "")))
                 ROOT.gSystem.Load(library)
 
         self.puppiCorrFile = ROOT.TFile.Open(

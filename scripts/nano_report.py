@@ -23,9 +23,9 @@ def root2map(tree):
         jsonind[run] = list(set(jsonind[run]))
 
     nruns = len(jsonind)
-    nlumis = sum(len(v) for v in jsonind.values())
+    nlumis = sum(len(v) for v in list(jsonind.values()))
     jsonmap = {}
-    for r, lumis in jsonind.items():
+    for r, lumis in list(jsonind.items()):
         if len(lumis) == 0:
             continue  # shouldn't happen
         lumis.sort()
@@ -57,4 +57,4 @@ if __name__ == '__main__':
     if summary:
         jmap, runs, lumis = summary
         json.dump(jmap, open(options.outputFile, 'w'))
-        print("Saved %s (%d runs, %d lumis)" % (options.outputFile, runs, lumis))
+        print(("Saved %s (%d runs, %d lumis)" % (options.outputFile, runs, lumis)))

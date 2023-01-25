@@ -45,7 +45,7 @@ class JobReport:
         ET.SubElement(infile, "GUID").text = ""
         ET.SubElement(infile, "EventsRead").text = "%s" % eventsRead
         runs = ET.SubElement(infile, "Runs")
-        for r, ls in runsAndLumis.items():
+        for r, ls in list(runsAndLumis.items()):
             run = ET.SubElement(runs, "Run", ID="%s" % r)
             for l in ls:
                 ET.SubElement(run, "LumiSection", ID="%s" % l)
@@ -63,7 +63,7 @@ class JobReport:
             infile, "BranchHash").text = "dc90308e392b2fa1e0eff46acbfa24bc"
         ET.SubElement(infile, "TotalEvents").text = "%s" % events
         runs = ET.SubElement(infile, "Runs")
-        for r, ls in runsAndLumis.items():
+        for r, ls in list(runsAndLumis.items()):
             run = ET.SubElement(runs, "Run", ID="%s" % r)
             for l in ls:
                 ET.SubElement(run, "LumiSection", ID="%s" % l)

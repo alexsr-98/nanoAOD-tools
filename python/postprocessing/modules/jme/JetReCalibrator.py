@@ -19,7 +19,8 @@ class JetReCalibrator:
             'jetPtThreshold': 15.,
             'skipEMfractionThreshold': 0.9,
             'skipMuons': True
-        }
+        },
+        isData = False,
      ):
         """Create a corrector object that reads the payloads from the text
         dumps of a global tag under CMGTools/RootTools/data/jec (see the
@@ -50,9 +51,18 @@ class JetReCalibrator:
         if upToLevel >= 3:
             self.vPar.push_back(self.L3JetPar)
         # Add residuals if needed
-        if doResidualJECs:
+        # MODIFIED ---> BEGINNING OF RUN3: CORRECTIONS ARE PRELIMINARY
+        # For MC: apply L2Residual
+        # For Data: apply L2L3Residual
+        if doResidualJECs and isData:
+            print(">> Early Run3: applying L2L3Residual to Data")
             self.ResJetPar = ROOT.JetCorrectorParameters(
                 "%s/%s_L2L3Residual_%s.txt" % (path, globalTag, jetFlavour))
+            self.vPar.push_back(self.ResJetPar)
+        elif doResidualJECs and not isData:
+            print(">> Early Run3: applying L2Residual to MC")
+            self.ResJetPar = ROOT.JetCorrectorParameters(
+                "%s/%s_L2Residual_%s.txt" % (path, globalTag, jetFlavour))
             self.vPar.push_back(self.ResJetPar)
         # Step3 (Construct a FactorizedJetCorrector object)
         self.JetCorrector = ROOT.FactorizedJetCorrector(self.vPar)

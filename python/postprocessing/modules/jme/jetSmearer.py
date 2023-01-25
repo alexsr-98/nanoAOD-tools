@@ -54,7 +54,7 @@ class jetSmearer(Module):
                 "libCondFormatsJetMETObjects", "libPhysicsToolsNanoAODTools"
         ]:
             if library not in ROOT.gSystem.GetLibraries():
-                print("Load Library '%s'" % library.replace("lib", ""))
+                print(("Load Library '%s'" % library.replace("lib", "")))
                 ROOT.gSystem.Load(library)
 
         self.puppiJMRFile = ROOT.TFile.Open(
@@ -68,13 +68,13 @@ class jetSmearer(Module):
     def beginJob(self):
         # initialize JER scale factors and uncertainties
         # (cf. PhysicsTools/PatUtils/interface/SmearedJetProducerT.h )
-        print("Loading jet energy resolutions (JER) from file '%s'" %
-              os.path.join(self.jerInputFilePath, self.jerInputFileName))
+        print(("Loading jet energy resolutions (JER) from file '%s'" %
+              os.path.join(self.jerInputFilePath, self.jerInputFileName)))
         self.jer = ROOT.PyJetResolutionWrapper(
             os.path.join(self.jerInputFilePath, self.jerInputFileName))
-        print("Loading JER scale factors and uncertainties from file '%s'" %
+        print(("Loading JER scale factors and uncertainties from file '%s'" %
               os.path.join(self.jerInputFilePath,
-                           self.jerUncertaintyInputFileName))
+                           self.jerUncertaintyInputFileName)))
         self.jerSF_and_Uncertainty = ROOT.PyJetResolutionScaleFactorWrapper(
             os.path.join(self.jerInputFilePath,
                          self.jerUncertaintyInputFileName))
@@ -119,7 +119,7 @@ class jetSmearer(Module):
         # --------------------------------------------------------------------------------------------
 
         if not (jet.Perp() > 0.):
-            print("WARNING: jet pT = %1.1f !!" % jet.Perp())
+            print(("WARNING: jet pT = %1.1f !!" % jet.Perp()))
             return (jet.Perp(), jet.Perp(), jet.Perp())
 
         # --------------------------------------------------------------------------------------------
@@ -219,7 +219,7 @@ class jetSmearer(Module):
         # ---------------------------------------------------------------------
 
         if not (jet.M() > 0.):
-            print("WARNING: jet m = %1.1f !!" % jet.M())
+            print(("WARNING: jet m = %1.1f !!" % jet.M()))
             return (jet.M(), jet.M(), jet.M())
 
         # ---------------------------------------------------------------------

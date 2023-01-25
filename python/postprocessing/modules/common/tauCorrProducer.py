@@ -184,16 +184,16 @@ class TauCorrectionsProducer(Module):
         
         # FILL BRANCHES
         if self.doSys:
-          for key, toolSFs in tau_sfs.items():
-            for tool, sfs in toolSFs.items():
+          for key, toolSFs in list(tau_sfs.items()):
+            for tool, sfs in list(toolSFs.items()):
               #for tau, sfdown, sf, sfup in zip(taus,sfs[0],sfs[1],sfs[2]):
               #  if tau.genPartFlav>0: print ">>> %-38s %3d %5d %6.2f %6.2f %6.2f +%6.2f -%6.2f"%(tool.branchname,tau.genPartFlav,tau.decayMode,tau.pt,tau.eta,sf,sfup,sfdown)
               self.out.fillBranch(tool.branchname+'Down',sfs[0])
               self.out.fillBranch(tool.branchname,       sfs[1])
               self.out.fillBranch(tool.branchname+'Up',  sfs[2])
         else:
-          for key, toolSFs in tau_sfs.items():
-            for tool, sfs in toolSFs.items():
+          for key, toolSFs in list(tau_sfs.items()):
+            for tool, sfs in list(toolSFs.items()):
               self.out.fillBranch(tool.branchname,sfs)
         if self.doTES:
           self.out.fillBranch("Tau_pt_corr",         taus_pt_corr)
