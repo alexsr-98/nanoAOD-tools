@@ -34,7 +34,7 @@ archiveTagsDATA = {
     'UL2016': 'Summer19UL16_V7_DATA',
     'UL2017': 'Summer19UL17_V5_DATA',
     'UL2018': 'Summer19UL18_V5_DATA',
-    '2022': 'Summer19UL18_V5_DATA',
+    '2022': 'Winter22Run3_RunC_V2_DATA',
 }
 
 jecTagsDATA = {

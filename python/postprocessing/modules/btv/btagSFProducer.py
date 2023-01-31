@@ -349,7 +349,7 @@ class btagSFProducer(Module):
 
     def analyze(self, event):
         """process event, return True (go to next module) or False (fail, go to next event)"""
-        jets = Collection(event, "Jet")
+        jets = Collection(event, self.collName)
 
         discr = None
         if self.algo == "csvv2":

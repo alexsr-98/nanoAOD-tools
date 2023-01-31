@@ -22,14 +22,18 @@ def mk_safe(fct, *args):
 
 class muonScaleResProducer(Module):
     def __init__(self, rc_dir, rc_corrections, dataYear):
-        p_postproc = '%s/src/PhysicsTools/NanoAODTools/python/postprocessing' % os.environ[
-            'CMSSW_BASE']
-        p_roccor = p_postproc + '/data/' + rc_dir
-        if "/RoccoR_cc.so" not in ROOT.gSystem.GetLibraries():
-            p_helper = '%s/RoccoR.cc' % p_roccor
-            print(('Loading C++ helper from ' + p_helper))
-            ROOT.gROOT.ProcessLine('.L ' + p_helper)
-        self._roccor = ROOT.RoccoR(p_roccor + '/' + rc_corrections)
+        if rc_dir != '' and rc_corrections != '':
+            p_postproc = '%s/src/PhysicsTools/NanoAODTools/python/postprocessing' % os.environ[
+                'CMSSW_BASE']
+            p_roccor = p_postproc + '/data/' + rc_dir
+            if "/RoccoR_cc.so" not in ROOT.gSystem.GetLibraries():
+                p_helper = '%s/RoccoR.cc' % p_roccor
+                print('Loading C++ helper from ' + p_helper)
+                ROOT.gROOT.ProcessLine('.L ' + p_helper)
+            self._roccor = ROOT.RoccoR(p_roccor + '/' + rc_corrections)
+            self.nominalValues = False
+        else:
+            self.nominalValues = True
 
     def beginJob(self):
         pass
@@ -49,40 +53,47 @@ class muonScaleResProducer(Module):
 
     def analyze(self, event):
         muons = Collection(event, "Muon")
-        if self.is_mc:
-            genparticles = Collection(event, "GenPart")
-        roccor = self._roccor
-        if self.is_mc:
+        if not self.nominalValues: # This will run corrections
+            if self.is_mc:
+                genparticles = Collection(event, "GenPart")
+            roccor = self._roccor
+            if self.is_mc:
+                pt_corr = []
+                pt_err = []
+                for mu in muons:
+                    genIdx = mu.genPartIdx
+                    if genIdx >= 0 and genIdx < len(genparticles):
+                        genMu = genparticles[genIdx]
+                        pt_corr.append(mu.pt *
+                                       mk_safe(roccor.kSpreadMC, mu.charge, mu.pt,
+                                               mu.eta, mu.phi, genMu.pt))
+                        pt_err.append(mu.pt *
+                                      mk_safe(roccor.kSpreadMCerror, mu.charge,
+                                              mu.pt, mu.eta, mu.phi, genMu.pt))
+                    else:
+                        u1 = random.uniform(0.0, 1.0)
+                        pt_corr.append(
+                            mu.pt * mk_safe(roccor.kSmearMC, mu.charge, mu.pt,
+                                            mu.eta, mu.phi, mu.nTrackerLayers, u1))
+                        pt_err.append(
+                            mu.pt * mk_safe(roccor.kSmearMCerror, mu.charge, mu.pt,
+                                            mu.eta, mu.phi, mu.nTrackerLayers, u1))
+            else:    
+                pt_corr = list(
+                    mu.pt *
+                    mk_safe(roccor.kScaleDT, mu.charge, mu.pt, mu.eta, mu.phi)
+                    for mu in muons)
+                pt_err = list(
+                    mu.pt *
+                    mk_safe(roccor.kScaleDTerror, mu.charge, mu.pt, mu.eta, mu.phi)
+                    for mu in muons)
+        else:
             pt_corr = []
             pt_err = []
             for mu in muons:
-                genIdx = mu.genPartIdx
-                if genIdx >= 0 and genIdx < len(genparticles):
-                    genMu = genparticles[genIdx]
-                    pt_corr.append(mu.pt *
-                                   mk_safe(roccor.kSpreadMC, mu.charge, mu.pt,
-                                           mu.eta, mu.phi, genMu.pt))
-                    pt_err.append(mu.pt *
-                                  mk_safe(roccor.kSpreadMCerror, mu.charge,
-                                          mu.pt, mu.eta, mu.phi, genMu.pt))
-                else:
-                    u1 = random.uniform(0.0, 1.0)
-                    pt_corr.append(
-                        mu.pt * mk_safe(roccor.kSmearMC, mu.charge, mu.pt,
-                                        mu.eta, mu.phi, mu.nTrackerLayers, u1))
-                    pt_err.append(
-                        mu.pt * mk_safe(roccor.kSmearMCerror, mu.charge, mu.pt,
-                                        mu.eta, mu.phi, mu.nTrackerLayers, u1))
+                pt_corr.append(mu.pt)
+                pt_err.append(0)
 
-        else:
-            pt_corr = list(
-                mu.pt *
-                mk_safe(roccor.kScaleDT, mu.charge, mu.pt, mu.eta, mu.phi)
-                for mu in muons)
-            pt_err = list(
-                mu.pt *
-                mk_safe(roccor.kScaleDTerror, mu.charge, mu.pt, mu.eta, mu.phi)
-                for mu in muons)
 
         self.out.fillBranch("Muon_corrected_pt", pt_corr)
         pt_corr_up = list(

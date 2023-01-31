@@ -890,11 +890,12 @@ class jetmetUncertaintiesProducer(Module):
             (met_T1_px_unclEnDown, met_T1_py_unclEnDown) = (met_T1_px, met_T1_py)
             (met_T1Smear_px_unclEnUp, met_T1Smear_py_unclEnUp) = (met_T1Smear_px, met_T1Smear_py)
             (met_T1Smear_px_unclEnDown, met_T1Smear_py_unclEnDown) = (met_T1Smear_px, met_T1Smear_py)
-
-
-            met_deltaPx_unclEn = 0 
-            met_deltaPy_unclEn = 0 
-            if self.metBranchName == "MET":
+            if self.metBranchName == 'PuppiMET':
+                met_deltaPx_unclEn = getattr(event, self.metBranchName + "_ptUnclusteredUp") * math.cos(getattr(event, self.metBranchName + "_phiUnclusteredUp")) - \
+                    getattr(event, self.metBranchName + "_pt") * math.cos(getattr(event, self.metBranchName + "_phi"))
+                met_deltaPy_unclEn = getattr(event, self.metBranchName + "_ptUnclusteredUp") * math.sin(getattr(event, self.metBranchName + "_phiUnclusteredUp")) - \
+                    getattr(event, self.metBranchName + "_pt") * math.sin(getattr(event, self.metBranchName + "_phi"))
+            else:
                 met_deltaPx_unclEn = getattr(
                     event, self.metBranchName + "_MetUnclustEnUpDeltaX")
                 met_deltaPy_unclEn = getattr(
