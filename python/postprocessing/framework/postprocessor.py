@@ -37,6 +37,12 @@ class PostProcessor:
         self.haddFileName = haddFileName
         self.histFile = None
         self.histDirName = None
+
+        #### MODIFICATION TO INCLUDE hCount AND hSumWeights HISTOGRAMS
+        self.hcount      = ROOT.TH1D("hCount",      "hCount",      1, 0, 1)
+        self.hsumweights = ROOT.TH1D("hSumWeights", "hSumWeights", 1, 0, 1)
+        #### ========
+
         if self.jobReport and not self.haddFileName:
             print("Because you requested a FJR we assume you want the final " \
                 "hadd. No name specified for the output file, will use tree.root")
@@ -166,6 +172,15 @@ class PostProcessor:
             nEntries = min(inTree.GetEntries() -
                            self.firstEntry, self.maxEntries)
             totEntriesRead += nEntries
+
+            #### MODIFICATION TO INCLUDE hCount AND hSumWeights HISTOGRAMS
+            self.hcount.SetBinContent(1, nEntries)
+            if inTree.GetBranchStatus("genWeight"):
+                inTree.Project("SumWeightsTemp", "1.0", "genWeight")
+                self.hsumweights.SetBinContent(1,
+                                               ROOT.gROOT.FindObject("SumWeightsTemp").Integral())
+            #### ========
+
             # pre-skimming
             elist, jsonFilter = preSkim(
                 inTree, self.json, self.cut, maxEntries=self.maxEntries, firstEntry=self.firstEntry)
@@ -184,6 +199,11 @@ class PostProcessor:
                 inAddTree = inAddFiles[-1].Get("Events")
                 if inAddTree == None:
                     inAddTree = inAddFiles[-1].Get("Friends")
+                else:
+                    try:
+                        dummyval = inAddTree.GetName()
+                    except:
+                        inAddTree = inAddFiles[-1].Get("Friends")
                 inAddTrees.append(inAddTree)
                 print(" >> ", inAddTree,  inAddFiles[-1])
                 inTree.AddFriend(inAddTree)
@@ -244,7 +264,14 @@ class PostProcessor:
 
             # now write the output
             if not self.noOut:
+
+                #### MODIFICATION TO INCLUDE hCount AND hSumWeights HISTOGRAMS
+                self.hcount.Write()
+                self.hsumweights.Write()
+                #### ========
+
                 outTree.write()
+                inFile.Close() # important to do this before
                 outFile.Close()
                 print(("Done %s" % outFileName))
             if self.jobReport:

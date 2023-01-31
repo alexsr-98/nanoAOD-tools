@@ -1,0 +1,23 @@
+### ttbar
+# ttbar dilep CP5
+/TTTo2L2Nu_TuneCP5_PSweights_13TeV-powheg-pythia8/palencia-TopNanoAODv6-1-1_2016-88146d75cb10601530484643de5f7795/USER
+
+### tW
+# tW nominal inclusiva CP5
+/ST_tW_antitop_5f_inclusiveDecays_TuneCP5_PSweights_13TeV-powheg-pythia8/palencia-TopNanoAODv6-1-1_2016-88146d75cb10601530484643de5f7795/USER
+
+### ttV
+# ttW NLO
+/TTWJetsToLNu_TuneCP5_PSweights_13TeV-amcatnloFXFX-madspin-pythia8/piedavid-TopNanoAODv6-1-2_2016-88146d75cb10601530484643de5f7795/USER
+
+### WW
+/WWTo2L2Nu_DoubleScattering_13TeV-pythia8/balvarez-TopNanoAODv6-1-1_2016-88146d75cb10601530484643de5f7795/USER
+
+
+### Triboson
+/WZG_TuneCUETP8M1_13TeV-amcatnlo-pythia8/balvarez-TopNanoAODv6-1-1_2016-88146d75cb10601530484643de5f7795/USER
+
+# ============= INCERTIDUMBRES
+### ttW
+#/TTWJetsToLNu_TuneCP5CR1_QCDbased_PSweights_13TeV-amcatnloFXFX-madspin-pythia8/piedavid-TopNanoAODv6-1-2_2016-88146d75cb10601530484643de5f7795/USER
+#/TTWJetsToLNu_TuneCP5CR2_GluonMove_PSweights_13TeV-amcatnloFXFX-madspin-pythia8/piedavid-TopNanoAODv6-1-2_2016-88146d75cb10601530484643de5f7795/USER

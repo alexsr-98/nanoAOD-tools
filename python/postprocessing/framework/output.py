@@ -116,7 +116,8 @@ class FullOutput(OutputTree):
             maxEntries=None,
             firstEntry=0,
             provenance=False,
-            jsonFilter=None
+            jsonFilter=None,
+            keepFriendLinks=False
     ):
         outputFile.cd()
 
@@ -164,12 +165,12 @@ class FullOutput(OutputTree):
                 print(("Not copying unknown tree %s" % kn))
             else:
                 self._otherObjects[kn] = inputFile.Get(kn)
-
     def fill(self):
         self._inputTree.readAllBranches()
         self._tree.Fill()
 
     def write(self):
+        #if not self._keepFriendLinks: self._unlinkFriends()
         if self.outputbranchSelection:
             self.outputbranchSelection.selectBranches(self._tree)
         self._tree = self.tree().CopyTree('1', "",

@@ -50,19 +50,10 @@ class JetReCalibrator:
             self.vPar.push_back(self.L2JetPar)
         if upToLevel >= 3:
             self.vPar.push_back(self.L3JetPar)
-        # Add residuals if needed
-        # MODIFIED ---> BEGINNING OF RUN3: CORRECTIONS ARE PRELIMINARY
-        # For MC: apply L2Residual
-        # For Data: apply L2L3Residual
-        if doResidualJECs and isData:
-            print(">> Early Run3: applying L2L3Residual to Data")
+        # Add residuals if needed but only if the file is there
+        if doResidualJECs and os.path.isfile("{path}/{gT}_L2L3Residual_{jetFlav}.txt".format(path = path, gT = globalTag, jetFlav = jetFlavour)):
             self.ResJetPar = ROOT.JetCorrectorParameters(
                 "%s/%s_L2L3Residual_%s.txt" % (path, globalTag, jetFlavour))
-            self.vPar.push_back(self.ResJetPar)
-        elif doResidualJECs and not isData:
-            print(">> Early Run3: applying L2Residual to MC")
-            self.ResJetPar = ROOT.JetCorrectorParameters(
-                "%s/%s_L2Residual_%s.txt" % (path, globalTag, jetFlavour))
             self.vPar.push_back(self.ResJetPar)
         # Step3 (Construct a FactorizedJetCorrector object)
         self.JetCorrector = ROOT.FactorizedJetCorrector(self.vPar)
