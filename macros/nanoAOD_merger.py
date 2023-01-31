@@ -153,8 +153,8 @@ def CraftSampleName(name):
 
     # Delete bits...
 #    deleteWords = ['13TeV', 'powheg', 'Powheg', 'pythia8']
-    deleteWords = ['MiniAODv2', "RunIISummer20UL16NanoAODv9", "106X", "mcRun2", "asymptotic", "v17", "v11",
-                   "v1", "v2", "v9", "L1v1", "upgrade2018", "RunIISummer20UL18NanoAODv9", "mc2017", "v16",
+    deleteWords = ['MiniAODv2', "RunIISummer20UL16NanoAODv9", "106X", "mcRun2", "asymptotic",
+                    "upgrade2018", "RunIISummer20UL18NanoAODv9", "mc2017",
                    "RunIISummer20UL16NanoAODAPVv9", "preVFP", "RunIISummer20UL17NanoAODv9", "realistic"]
     s = name.replace('-', '_').replace("/", "_").split('_')
     a = ''

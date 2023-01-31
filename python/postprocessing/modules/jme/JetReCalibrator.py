@@ -49,8 +49,8 @@ class JetReCalibrator:
             self.vPar.push_back(self.L2JetPar)
         if upToLevel >= 3:
             self.vPar.push_back(self.L3JetPar)
-        # Add residuals if needed
-        if doResidualJECs:
+        # Add residuals if needed but only if the file is there
+        if doResidualJECs and os.path.isfile("{path}/{gT}_L2L3Residual_{jetFlav}.txt".format(path = path, gT = globalTag, jetFlav = jetFlavour)):
             self.ResJetPar = ROOT.JetCorrectorParameters(
                 "%s/%s_L2L3Residual_%s.txt" % (path, globalTag, jetFlavour))
             self.vPar.push_back(self.ResJetPar)

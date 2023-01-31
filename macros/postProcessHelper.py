@@ -4,7 +4,7 @@ import os, sys, json, argparse
 from math import ceil
 
 #### Modify as you wish
-production = "2022-10-25"
+production = "2023-01-24_forData_removeLater"
 outPath = "/beegfs/data/nanoAODv9/temp/postprocv10Run3/tw_run3/productions/" + production + "/{year}/"
 #outPath = "/pool/phedexrw/userstorage/asoto/Proyectos/tw_run3/productions/" + production + "/{year}/"
 logPath = outPath + "logs/"
@@ -77,6 +77,7 @@ if __name__ == '__main__':
         
         # pararelise this
         numFiles = len(files)
+        nthreads = args.nthreads # again to avoid problems
         if nthreads > numFiles:
             nthreads = numFiles
             print("WARNING: nthreads is greater than the number of files, nthreads will be set to the number of files")

@@ -41,7 +41,7 @@ if __name__ == "__main__":
     if not isData:
         cut = '((nElectron + nMuon) >= 2) || (nGenDressedLepton >= 2)'
     else:
-        cut = '((nElectron + nMuon) >= 2)'
+        cut = '((nElectron + nMuon) >= 2) && (run <= 361906 || run >= 362350)' ### REMOVE THIS EVENT CUT FOR DATA
     
     compatibleyears = [2022]
     if year not in compatibleyears:
@@ -50,7 +50,7 @@ if __name__ == "__main__":
     ### Set golden json
     jsonfile = None
     if year == "2022" and isData:
-        jsonfile = '/nfs/fanae/user/cvico/WorkSpace/wz-run3/release/CMSSW_10_4_0/src/CMGTools/TTHAnalysis/cfg/Cert_Collisions2022_355100_360491_Golden.json'    
+        jsonfile = '/nfs/fanae/user/asoto/Proyectos/tW-Victor/CMSSW_10_4_0/src/PhysicsTools/NanoAODTools/data/jsonLumi/Cert_Collisions2022_355100_362760_Golden.json'    
 
     
     ### Set up the modules
@@ -201,7 +201,7 @@ if __name__ == "__main__":
                   slimfilein,
                   mod,
                   provenance      = True,
-                  fwkJobReport    = True,
+                  fwkJobReport    = False,
                   jsonInput       = jsonfile,
                   outputbranchsel = slimfileout,
                   )
