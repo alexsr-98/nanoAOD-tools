@@ -24,3 +24,5 @@ Steps to run the post processing:
  Important things to take into account:
 
  * Always review that the correct json file is being used.
+
+**Note:** if crab is used to process nanoAOD always run `fileBased` splitting.
