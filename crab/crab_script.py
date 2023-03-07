@@ -7,7 +7,7 @@ from PhysicsTools.NanoAODTools.postprocessing.framework.crabhelper import inputF
 
 ### SKIM 
 #cut = 'Jet_pt > 200 && (nElectron + nMuon) >= 2 && nGenDressedLepton >= 2'
-cut = '(nElectron + nMuon) >= 2'
+cut = '(nElectron + nMuon) >= 1'
 
 ### SLIM FILE
 slimfilein  = "SlimFileIn.txt"
@@ -17,8 +17,11 @@ from PhysicsTools.NanoAODTools.postprocessing.modules.jme.jetmetUncertainties im
 from PhysicsTools.NanoAODTools.postprocessing.modules.jme.jetMetCorrelator import *
 from PhysicsTools.NanoAODTools.postprocessing.modules.common.puWeightProducer import *
 from PhysicsTools.NanoAODTools.postprocessing.modules.common.muonScaleResProducer import *
+from PhysicsTools.NanoAODTools.postprocessing.modules.common.ElectronScaleSmear import *
 from PhysicsTools.NanoAODTools.postprocessing.modules.common.PrefireCorr import *
-from PhysicsTools.NanoAODTools.postprocessing.modules.skimNRecoLeps import *
+from PhysicsTools.NanoAODTools.postprocessing.modules.skimNRecoLeps5TeV import skimRecoLeps5TeV
+from PhysicsTools.NanoAODTools.postprocessing.modules.skimNRecoLeps5TeVdimu import skimRecoLeps5TeVdimu
+from PhysicsTools.NanoAODTools.postprocessing.modules.skimNRecoLepsRun3 import *
 from PhysicsTools.NanoAODTools.postprocessing.modules.addTnPvarMuon import *
 from PhysicsTools.NanoAODTools.postprocessing.modules.jme.jetRecalib import *
 isData    = 'data' in sys.argv[-1] or 'Data' in sys.argv[-1]
@@ -26,12 +29,14 @@ doNotSkim = 'noskim' in sys.argv[-1] or 'noSkim' in sys.argv[-1]
 doTnP     = 'TnP'  in sys.argv[-1]
 doJECunc  = 'JEC'  in sys.argv[-1]
 doMuonScale = 'muScale' in sys.argv[-1]
-doJECunc = True
-doMuonScale = True
+doJECunc    = False
+doMuonScale = False
+doElecScale = False
 if         '18' in sys.argv[-1] : year = 18
 elif       '16' in sys.argv[-1] : year = 16
 elif        '5' in sys.argv[-1] : year =  5
-else                            : year = 17
+elif       '22' in sys.argv[-1] : year = 22
+else                            : year = 22
 era = '' if not 'era' in sys.argv[-1] else sys.argv[-1][sys.argv[-1].find('era')+3:sys.argv[-1].find('era')+4]
 if era !='': print '>Found era: ', era
 
@@ -56,20 +61,23 @@ if not isData:
     #jecarc   = "Autumn18_V19_MC"
     mod.append(puWeight_2018())
   elif year == 5:
-    mod.append(puWeight_5TeV())
-    mod.append(PrefCorr5TeV())
-    jecfile  = "Spring18_ppRef5TeV_V4_MC"
-    jecarc   = "Spring18_ppRef5TeV_V4_MC"
+    pass
+    #mod.append(puWeight_5TeV())
+    #mod.append(PrefCorr5TeV())
+    #jecfile  = "Spring18_ppRef5TeV_V4_MC"
+    #jecarc   = "Spring18_ppRef5TeV_V4_MC"
     #mod.append()
-  else           :  mod.append(puWeight_2017())
+  elif year == 22:
+    pass
 #elif year == 18 and era != '': 
 #  jecfile = 'Autumn18_Run%s_V8_DATA'%era
 #  jecarc  = 'Autumn18_V8_DATA'
 elif year == 5:
-  jecfile = 'Spring18_ppRef5TeV_V4_DATA'
-  jecarc  = 'Spring18_ppRef5TeV_V4_DATA'
+  #jecfile = 'Spring18_ppRef5TeV_V4_DATA'
+  #jecarc  = 'Spring18_ppRef5TeV_V4_DATA'
   #jecfile = 'Spring18_ppRef5TeV_V2_DATA'
-  #jecarc  = 'Spring18_ppRef5TeV_V2_DATA'
+  #jecarc  = 'Spring18_ppRef5TeV_2_DATA'
+  pass
 
 if jecfile != '': 
   print 'JEC file: ', jecfile
@@ -86,9 +94,17 @@ if doTnP:
     elif year == 18: mod.append(addTnPMuonForMoriond18())
   slimfilein = "SlimFileTnP.txt"
   slimfileout = "SlimFileTnP.txt"
-  cut = 'nMuon >= 2 && Muon_pt[0] > 25 && Muon_pt[1] >= 12'
+  #cut = 'nMuon >= 2 && Muon_pt[0] > 25 && Muon_pt[1] >= 12'
 else:
-  if not doNotSkim: mod.append(skimRecoLeps())
+  if not doNotSkim: 
+    if year == 22:
+      mod.append(skimRecoLeps())
+    elif year == 5:
+      print("Adding 5 TeV skim!!")
+      mod.append(skimRecoLeps5TeV())
+      #mod.append(skimRecoLeps5TeVdimu())
+    else:
+      mod.append(skimRecoLeps())
   else: cut = ''
   if doJECunc and not isData: 
     if   year == 16: 
@@ -102,21 +118,34 @@ else:
       mod.append(jetMetCorrelations2018())
     elif year == 5:  mod.append(jetmetUncertainties5TeV())
   if doMuonScale:
+    print("Adding muon scale!")
     if   year == 16: mod.append(muonScaleRes2016())
     elif year == 17: mod.append(muonScaleRes2017())
     elif year == 18: mod.append(muonScaleRes2018())
     elif year ==  5: mod.append(muonScaleRes2017())
+  if doElecScale:
+    print("Adding elec scale!")
+    if year ==  5: 
+      if isData: mod.append(elecScale5TeVData())
+      else     : mod.append(elecScale5TeVMC())
+    if not isData:
+      if   year == 16: mod.append(elecUnc2016MC())
+      elif year == 17: mod.append(elecUnc2017MC())
+      elif year == 18: mod.append(elecUnc2018MC())
+    elif year == 17: mod.append(elecScale2017Data())
 
-print '>> Slim file in : ', slimfilein
-print '>> Slim file out: ', slimfileout
-print '>> cut: ', cut
-print '>> ' + ('Is data!' if isData else 'Is MC!')
-print '>> ' + ('Creating a TnP Tree' if doTnP else 'Creating a skimmed nanoAOD file')
-if doJECunc: print '>> Adding JEC uncertainties'
+print( '>> Slim file in : ', slimfilein)
+print( '>> Slim file out: ', slimfileout)
+print( '>> cut: ', cut)
+print( '>> ' + ('Is data!' if isData else 'Is MC!'))
+print( '>> ' + ('Creating a TnP Tree' if doTnP else 'Creating a skimmed nanoAOD file'))
+print( '>> Mod: ', mod)
+if doJECunc: print( '>> Adding JEC uncertainties')
 
 #mod = [puAutoWeight(),jetmetUncertainties2017All(), skimRecoLeps()]
+slimfilein = None; slimfileout = None
 p=PostProcessor(".",inputFiles(),cut,slimfilein,mod,provenance=True,fwkJobReport=True,jsonInput=jsonfile,outputbranchsel=slimfileout) #jsonInput
 p.run()
 
-print "DONE"
+print("DONE")
 os.system("ls -lR")

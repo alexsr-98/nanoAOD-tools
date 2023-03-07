@@ -8,9 +8,9 @@ from PhysicsTools.NanoAODTools.postprocessing.framework.eventloop import Module
 
 class skipNRecoLeps(Module):
     def __init__(self, isdata = False, year = 17, recalibjets = '', era = ''):
-        self.minelpt    =  8# 12 # 10 for 5 TeV, 18 for 13 # 7 for multilep
-        self.minmupt    =  8#  0 for 5 TeV, 18 for 13 # 7 for multilep
-        self.leadleppt  = 12# 12 for 5 TeV, 18 for 13
+        self.minelpt    =  0# 12 # 10 for 5 TeV, 18 for 13 # 7 for multilep
+        self.minmupt    =  0#  0 for 5 TeV, 18 for 13 # 7 for multilep
+        self.leadleppt  = 0# 12 for 5 TeV, 18 for 13
         self.maxeleta = 2.5
         self.maxmueta = 2.5
         self.isData = isdata
@@ -52,25 +52,23 @@ class skipNRecoLeps(Module):
         elec = Collection(event, 'Electron')
         muon = Collection(event, 'Muon')
 
-        nlepgood = 0; minptLeading = False
-        lepCharge = []
+        nlepgood = 0; 
         for mu in muon:
-          if mu.pt > self.minmupt and abs(mu.eta) < self.maxmueta:# and (mu.tightId or mu.mediumId): 
+          if mu.mediumPromptId:
             nlepgood += 1
-            lepCharge.append(mu.charge)
-            if mu.pt >= self.leadleppt: minptLeading = True
-        for el in elec:
-          if el.pt > self.minelpt and abs(el.eta) < self.maxeleta: #and (el.cutBased >= 1): 
-            nlepgood += 1
-            lepCharge.append(el.charge)
-            if el.pt >= self.leadleppt: minptLeading = True
+
+        #for el in elec:
+        #  if el.pt > self.minelpt and abs(el.eta) < self.maxeleta and el.mvaFall17V2noIso_WPL: #and (el.cutBased >= 1): 
+        #    nlepgood += 1
+        #    lepCharge.append(el.charge)
+        #    if el.pt >= self.leadleppt: minptLeading = True
 
         #if   nlepgood < 2:   return False
         #elif nlepgood == 2:  return ((lepCharge[0] * lepCharge[1] > 0) and minptLeading)
         #else              :  return minptLeading
         
-        return nlepgood >= 2 and minptLeading
+        return nlepgood >= 2
 
 # define modules using the syntax 'name = lambda : constructor' to avoid having them loaded when not needed
 
-skimRecoLeps = lambda : skipNRecoLeps()
+skimRecoLeps5TeVdimu = lambda : skipNRecoLeps()

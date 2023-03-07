@@ -38,7 +38,8 @@ class puWeightProducer(Module):
             print "Could not load module via python, trying via ROOT", e
             if "/WeightCalculatorFromHistogram_cc.so" not in ROOT.gSystem.GetLibraries():
                 print "Load C++ Worker"
-                ROOT.gROOT.ProcessLine(".L %s/src/PhysicsTools/NanoAODTools/src/WeightCalculatorFromHistogram.cc++" % os.environ['CMSSW_BASE'])
+                #ROOT.gROOT.ProcessLine(".L %s/src/PhysicsTools/NanoAODTools/src/WeightCalculatorFromHistogram.cc+" % os.environ['CMSSW_BASE'])
+                ROOT.gROOT.ProcessLine(".L %s/src/PhysicsTools/NanoAODTools/python/postprocessing/data/pileup/WeightCalculatorFromHistogram.cc+" % os.environ['CMSSW_BASE'])
             dummy = ROOT.WeightCalculatorFromHistogram
     def loadHisto(self,filename,hname):
         tf = ROOT.TFile.Open(filename)

@@ -40,37 +40,33 @@ class skipNRecoLeps(Module):
       else:      f+= '_MC'
       return f
 
-    #def OpenJECcalibrator(self, jetType = "AK4PF", doRes = True):
-    #    # For jet re-calibrating
-    #    fileNameJEC = self.filenameJEC
-    #    jesInputFilePath = os.environ['CMSSW_BASE'] + "/src/PhysicsTools/NanoAODTools/data/jme/" # By default
-    #    print 'Using the file: ', jesInputFilePath+fileNameJEC
-    #    return JetReCalibrator(fileNameJEC, jetType , doRes, jesInputFilePath, upToLevel=1)
-
     def analyze(self, event):
         #jets = Collection(event, 'Jet')
         elec = Collection(event, 'Electron')
         muon = Collection(event, 'Muon')
 
-        nlepgood = 0; minptLeading = False
-        lepCharge = []
+        event_pass = False
+        nlepgood = 0; pts = []
+        minLeadingPt = 23; minSubleadingPt = 14;
+        # Loose muons, no iso
         for mu in muon:
-          if mu.pt > self.minmupt and abs(mu.eta) < self.maxmueta:# and (mu.tightId or mu.mediumId): 
-            nlepgood += 1
-            lepCharge.append(mu.charge)
-            if mu.pt >= self.leadleppt: minptLeading = True
+          if True: # These are loose!
+            nlepgood += 1 
+            pts.append(mu.pt)
+
+        # Loose electrons MVA - OR - loose cutbased
         for el in elec:
-          if el.pt > self.minelpt and abs(el.eta) < self.maxeleta: #and (el.cutBased >= 1): 
+          #if el.pt > self.minelpt and abs(el.eta) < self.maxeleta: #and (el.cutBased >= 1): 
+          if el.cutBased >= 1  or  el.mvaNoIso_WPL: 
             nlepgood += 1
-            lepCharge.append(el.charge)
-            if el.pt >= self.leadleppt: minptLeading = True
+            pts.append(el.pt)
 
-        #if   nlepgood < 2:   return False
-        #elif nlepgood == 2:  return ((lepCharge[0] * lepCharge[1] > 0) and minptLeading)
-        #else              :  return minptLeading
-        
-        return nlepgood >= 2 and minptLeading
+        # At least two leptons with some pT cuts
+        pts.sort() # sort by pT
+        pts = pts[::-1] # Decreasing order
+        if nlepgood >= 2 and pts[0] >= minLeadingPt and pts[1] >= minSubleadingPt:
+          event_pass = True
 
-# define modules using the syntax 'name = lambda : constructor' to avoid having them loaded when not needed
+        return event_pass
 
 skimRecoLeps = lambda : skipNRecoLeps()

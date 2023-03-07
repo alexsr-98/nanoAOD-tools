@@ -85,6 +85,7 @@ def GuessYear(path):
   elif '2018'    in path: return 18
   elif '2017'    in path: return 17
   elif '2016'    in path: return 16
+  elif '2022'    in path: return 22
 
 def CrateCrab_cfg(datasetName, isData = False, isTest = False, productionTag = 'prodTest', year = 0, options = '', outTier = 'T2_ES_IFCA'):
   ''' Creates a cfg file to send crab jobs to analyze a given dataset '''
@@ -105,6 +106,9 @@ def CrateCrab_cfg(datasetName, isData = False, isTest = False, productionTag = '
   lumiMask = ''
   crabScript = 'crab_script.py'
   crabname = 'crab_script_' + productionTag
+  print("year = ", year)
+  print("isData = ", isData)
+  print("options = ", options)
   craboptions = '%s,%i'%(options,year) if not isData else 'data,%s,%i'%(options,year)
   era = GetEra(datasetName, year, isData)
   if era != '': craboptions += ',era%s'%era
@@ -257,7 +261,7 @@ if narg == 0:
   print ' >   Only creates the cfg file; does not send jobs'
   print ' > --options'
   print ' >   Add different options... as --options "TnP" or --options "2018,data"'
-  print ' > --nutTier'
+  print ' > --outTier'
   print ' >   Select your Tier... by default: T2_ES_IFCA'
   print ' '
   print ' > Examples:'
@@ -275,7 +279,7 @@ def __main__():
   parser.add_argument('--test','-t'       , action='store_true'  , help = 'Sends only one or two jobs, as a test')
   parser.add_argument('--dataset','-d'    , default=''           , help = 'Submit jobs to run on a given dataset')
   parser.add_argument('--year','-y'       , default=0            , help = 'Year')
-  parser.add_argument('--prodName','-n'   , default=''           , help = 'Give a name to your production')
+  parser.add_argument('--prodName','-n'   , default='test'       , help = 'Give a name to your production')
   parser.add_argument('--options','-o'    , default=''           , help = 'Options to pass to your producer')
   parser.add_argument('--outTier'    , default='T2_ES_IFCA' , help = 'Your output tier')
   parser.add_argument('file'         , default=''           , nargs='?', help = 'txt file with datasets')

@@ -44,3 +44,4 @@ keep Probe_*
 keep Tag_*
 keep nTrigObj
 keep TrigObj*
+keep HLT_HIEle17_WPLoose_Gsf

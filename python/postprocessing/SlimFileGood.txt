@@ -53,4 +53,5 @@ keep HLT_*DoubleMuSS*
 keep HLT_HIEle20_WPLoose_Gsf
 keep HLT_*Ele20_WPLoose_Gsf
 keep HLT_HIL3Mu20
+keep HLT_HIEle17_WPLoose_Gsf
 keep HLT_*L3Mu20
