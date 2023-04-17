@@ -45,9 +45,16 @@ class skipNRecoLeps(Module):
         elec = Collection(event, 'Electron')
         muon = Collection(event, 'Muon')
 
+        if not self.isData:
+          thegenleps = Collection(event, 'GenDressedLepton')
+          nlepgengood = 0
+          for lep in thegenleps:
+            if lep.pt > 10:
+              nlepgengood += 1
+
         event_pass = False
         nlepgood = 0; pts = []
-        minLeadingPt = 23; minSubleadingPt = 14;
+        minLeadingPt = 15; minSubleadingPt = 10;
         # Loose muons, no iso
         for mu in muon:
           if True: # These are loose!
@@ -57,16 +64,20 @@ class skipNRecoLeps(Module):
         # Loose electrons MVA - OR - loose cutbased
         for el in elec:
           #if el.pt > self.minelpt and abs(el.eta) < self.maxeleta: #and (el.cutBased >= 1): 
-          if el.cutBased >= 1  or  el.mvaNoIso_WPL: 
+          if el.cutBased >= 1: 
             nlepgood += 1
             pts.append(el.pt)
 
         # At least two leptons with some pT cuts
         pts.sort() # sort by pT
         pts = pts[::-1] # Decreasing order
-        if nlepgood >= 2 and pts[0] >= minLeadingPt and pts[1] >= minSubleadingPt:
-          event_pass = True
+        if self.isData:
+          if nlepgood >= 2 and pts[0] >= minLeadingPt and pts[1] >= minSubleadingPt:
+            event_pass = True
+        else:
+          if (nlepgood >= 2 and pts[0] >= minLeadingPt and pts[1] >= minSubleadingPt) or nlepgengood >= 2:
+            event_pass = True
 
         return event_pass
 
-skimRecoLeps = lambda : skipNRecoLeps()
+skimRecoLeps = lambda isData: skipNRecoLeps(isdata = isData)

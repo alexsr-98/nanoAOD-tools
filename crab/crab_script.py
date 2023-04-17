@@ -7,7 +7,7 @@ from PhysicsTools.NanoAODTools.postprocessing.framework.crabhelper import inputF
 
 ### SKIM 
 #cut = 'Jet_pt > 200 && (nElectron + nMuon) >= 2 && nGenDressedLepton >= 2'
-cut = '(nElectron + nMuon) >= 1'
+
 
 ### SLIM FILE
 slimfilein  = "SlimFileIn.txt"
@@ -39,6 +39,12 @@ elif       '22' in sys.argv[-1] : year = 22
 else                            : year = 22
 era = '' if not 'era' in sys.argv[-1] else sys.argv[-1][sys.argv[-1].find('era')+3:sys.argv[-1].find('era')+4]
 if era !='': print '>Found era: ', era
+
+#####CUT
+if not isData:
+  cut = '((nElectron + nMuon) >= 2 || (nGenDressedLepton >= 2))'
+else:
+  cut = '((nElectron + nMuon) >= 2)'
 
 ### Json file
 jsonfile = runsAndLumis()
@@ -98,7 +104,7 @@ if doTnP:
 else:
   if not doNotSkim: 
     if year == 22:
-      mod.append(skimRecoLeps())
+      mod.append(skimRecoLeps(isData))
     elif year == 5:
       print("Adding 5 TeV skim!!")
       mod.append(skimRecoLeps5TeV())
