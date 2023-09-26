@@ -4,16 +4,16 @@ import os, sys, json, argparse
 from math import ceil
 
 #### Modify as you wish
-production = "2023-01-24_forData_removeLater"
-outPath = "/beegfs/data/nanoAODv9/temp/postprocv10Run3/tw_run3/productions/" + production + "/{year}/"
+production = "2023-09-25_tests"
+outPath = "/lustrefs/hdd_pool_dir/nanoAODv11/tw-run3/productions/" + production + "/{year}/"
 #outPath = "/pool/phedexrw/userstorage/asoto/Proyectos/tw_run3/productions/" + production + "/{year}/"
 logPath = outPath + "logs/"
 jobName = "postProcess_twRun3"
 #######################
 
-slurmscaff   = 'sbatch {extraS} -c {nth} -p {queue} -J {jobname} -e {logpath}/log.%j.%x.err -o {logpath}/log.%j.%x.out --wrap "{command}"'
+slurmscaff   = 'sbatch {extraS} -c {nth} -p {queue} -J {jobname} -e {logpath}/log{files}.%j.%x.err -o {logpath}/log{files}.%j.%x.out --wrap "{command}"'
 
-command = 'python postProcess_tWRun3.py {files} -n {name} -y {year} -iD {isData} -xS {xsec} -o {outputPath}'
+command = 'python3 postProcess_tWRun3.py {files} -n {name} -y {year} -iD {isData} -xS {xsec} -o {outputPath} -s {split}'
 
 def CheckPathDataset(path):
     ''' Check if the name exists in local folder or in dataset folder '''
@@ -53,12 +53,14 @@ if __name__ == '__main__':
 
     for sample in samples:
         # Extract sample info
-        isData = sample["isData"]
-        year = sample["year"]
-        name = sample["name"]
-        files = sample["files"]
+        isData = samples[sample]["isData"]
+        year = samples[sample]["year"]
+        name = samples[sample]["name"]
+        files = samples[sample]["files"]
+        split = False
         if not isData:
-            xsec = sample["xsec"]
+            xsec = samples[sample]["xsec"]
+            split = samples[sample]["split"]
         else:
             xsec = 0
 
@@ -72,8 +74,14 @@ if __name__ == '__main__':
             os.system("mkdir -p " + outPath)
         if not os.path.isdir(logPath) and not doPretend:
             os.system("mkdir -p " + logPath)
-        if not os.path.isdir(outPath + name) and not doPretend:
-            os.system("mkdir -p " + outPath + name)
+        if not split:
+            if not os.path.isdir(outPath + name) and not doPretend:
+                os.system("mkdir -p " + outPath + name)
+        else:
+            if not os.path.isdir(outPath + name + "_train") and not doPretend:
+                os.system("mkdir -p " + outPath + name + "_train")
+            if not os.path.isdir(outPath + name + "_analysis") and not doPretend:
+                os.system("mkdir -p " + outPath + name + "_analysis")
         
         # pararelise this
         numFiles = len(files)
@@ -90,20 +98,29 @@ if __name__ == '__main__':
         for job in range(1, nthreads+1):
             # create a string with all the files for argparse
             filesString = ''
+            listFiles = '_'
             for file in files[counter:(counter+ceilJobs)]:
                 filesString += " -f " + file
+                listFiles += file.split("/")[-1].split(".")[0] + "_"
 
-            formatedCommand = command.format(files = filesString, name = name, isData = isData, year = year, xsec = xsec, outputPath = outPath)
+            if not split:
+                formatedCommandList = [command.format(files = filesString, name = name, isData = isData, year = year, xsec = xsec, outputPath = outPath, split = "''")] 
+            else:
+                formatedCommandList = [command.format(files = filesString, name = name, isData = isData, year = year, xsec = xsec, outputPath = outPath, split ="even"),
+                                   command.format(files = filesString, name = name, isData = isData, year = year, xsec = xsec, outputPath = outPath, split = "odd")]
+                
             print("A total of %3d files will be sended in this job:" %len(files[counter:(counter+ceilJobs)]))
-            if queue == "": # Run in local
-                print(formatedCommand)
-                if not doPretend:
-                    os.system(formatedCommand)
-            else: # Run in the cluster, at the moment the paralelisation is very simple: nthreads is the number of jobs submitted with 1 thread (notice the nth = 1 in the formula)
-                slurmscaffFormated = slurmscaff.format(extraS = extraSlurmArgs, nth = 1, queue = queue, jobname = jobName, logpath = logPath, command = formatedCommand)
-                print(slurmscaffFormated)
-                if not doPretend:
-                    os.system(slurmscaffFormated)
+            
+            for formatedCommand in formatedCommandList:
+                if queue == "": # Run in local
+                    print(formatedCommand)
+                    if not doPretend:
+                        os.system(formatedCommand)
+                else: # Run in the cluster, at the moment the paralelisation is very simple: nthreads is the number of jobs submitted with 1 thread (notice the nth = 1 in the formula)
+                    slurmscaffFormated = slurmscaff.format(extraS = extraSlurmArgs, nth = 1, queue = queue, jobname = jobName, logpath = logPath, files=listFiles, command = formatedCommand)
+                    print(slurmscaffFormated)
+                    if not doPretend:
+                        os.system(slurmscaffFormated)
             
             if job == moduleJobs:
                 ceilJobs = ceilJobs - 1

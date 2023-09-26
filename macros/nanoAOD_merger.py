@@ -16,11 +16,11 @@ class pcol:
 
 
 def printerror(message):
-  print '\033[1;41mERROR\033[0m \033[91m' + message + '\033[0m'
+  print('\033[1;41mERROR\033[0m \033[91m' + message + '\033[0m')
 
 
 def printwarning(message):
-  print '\033[1;43mWARNING\033[0m \033[93m' + message + '\033[0m'
+  print('\033[1;43mWARNING\033[0m \033[93m' + message + '\033[0m')
 
 
 def GetEntries(trees, treeName = 'Events', verbose = False):
@@ -32,7 +32,7 @@ def GetEntries(trees, treeName = 'Events', verbose = False):
     c = r.TChain(treeName, treeName)
     for t in treelist:
         if "" == t: continue
-        if verbose: print "\t- Adding", t
+        if verbose: print("\t- Adding", t)
         c.Add(t)
     return c.GetEntries()
 
@@ -48,23 +48,23 @@ def hadd(rootfiles, outname, index, outdir, totsize = None, pretend = False, for
         command = 'cp ' + inp + ' ' + out
         if verbose >= 1: printwarning('Only one file! Using cp instead of haddnano.py...')
     else:
-        command = 'python {src}/src/PhysicsTools/NanoAODTools/scripts/haddnano.py {o} {i}'.format(src = os.environ['CMSSW_BASE'],
+        command = 'python3 {src}/src/PhysicsTools/NanoAODTools/scripts/haddnano.py {o} {i}'.format(src = os.environ['CMSSW_BASE'],
                                                                                               o   = out,
                                                                                               i   = inp) # -ff -O
     
-    if verbose >= 1: print ' >> ' + pcol.green + 'Hadding ', len(rootfiles), ' files into ' + pcol.red , out + (" " + pcol.white + 'Total: %1.0f MB' %(totsize)) * (isinstance(totsize, float)) + pcol.end
+    if verbose >= 1: print(' >> ' + pcol.green + 'Hadding ', len(rootfiles), ' files into ' + pcol.red , out + (" " + pcol.white + 'Total: %1.0f MB' %(totsize)) * (isinstance(totsize, float)) + pcol.end)
     
     #print '    ' + pcol.red + command + pcol.end
     
     if os.path.isfile(out):
         if verbose >= 1: printwarning('The output file already exists!: ' + out)
-        if verbose >= 1: print pcol.red + 'Skipping...' + pcol.end
-        print "# Checking " + out
+        if verbose >= 1: print(pcol.red + 'Skipping...' + pcol.end)
+        print("# Checking " + out)
         iEntries = GetEntries(inp, verbose = verbose)
         oEntries = GetEntries(out, verbose = verbose)
         if iEntries != oEntries:
             printerror('NOT SAME NUMBER OF ENTRIES IN INPUT (%i) AND OUTPUT (%i)'%(iEntries, oEntries))
-        else: print pcol.green + 'GOOD!' + pcol.end
+        else: print(pcol.green + 'GOOD!' + pcol.end)
         return
     if not pretend: 
         os.system(command)
@@ -73,7 +73,7 @@ def hadd(rootfiles, outname, index, outdir, totsize = None, pretend = False, for
         if iEntries != oEntries:
             printerror('NOT SAME NUMBER OF ENTRIES IN INPUT (%i) AND OUTPUT (%i)'%(iEntries, oEntries))
     elif verbose:
-        print " >> You would have executed:", pcol.white + command + pcol.end
+        print(" >> You would have executed:", pcol.white + command + pcol.end)
     return
 
 
@@ -92,7 +92,7 @@ def haddtrees(dirname, outname, outdir, maxsize = 5000., pretend = False, verbos
     if outname[-5:] == '.root':
         outname = outname[:-5]
     
-    if verbose >= 1: print 'Looking into: ', dirname
+    if verbose >= 1: print('Looking into: ', dirname)
     
     for path, subdirs, files in os.walk(dirname):
         for name in files:
@@ -102,18 +102,18 @@ def haddtrees(dirname, outname, outdir, maxsize = 5000., pretend = False, verbos
     thefiles.sort(key = sortByiF)
     
     for iF in thefiles:
-        out   = float(os.path.getsize(iF))/1000000.
+        out   = float(os.path.getsize(iF))/1000000. 
         size  += out
         
-        if size < maxsize: 
-            if verbose >= 1: print 'Adding ' + pcol.orange + iF.split("/")[-1] + pcol.end + ' (' + pcol.cyan + '%1.0f MB' %(out) + pcol.end + '). ' + pcol.white + 'Total: %1.0f MB' %(size) + pcol.end
+        if size < maxsize and len(rootfiles) < 900: 
+            if verbose >= 1: print('Adding ' + pcol.orange + iF.split("/")[-1] + pcol.end + ' (' + pcol.cyan + '%1.0f MB' %(out) + pcol.end + '). ' + pcol.white + 'Total: %1.0f MB' %(size) + pcol.end)
             rootfiles.append(iF)
         else:
             hadd(rootfiles, outname, index, outdir, size, pretend)
             index += 1
             rootfiles = []
             size      = out
-            if verbose >= 1: print 'Adding ' + pcol.orange + iF.split("/")[-1] + pcol.end + ' (' + pcol.cyan + '%1.0f MB' %(out) + pcol.end + '). ' + pcol.white + 'Total: %1.0f MB' %(size) + pcol.end
+            if verbose >= 1: print('Adding ' + pcol.orange + iF.split("/")[-1] + pcol.end + ' (' + pcol.cyan + '%1.0f MB' %(out) + pcol.end + '). ' + pcol.white + 'Total: %1.0f MB' %(size) + pcol.end)
             rootfiles.append(iF)
 
     if   len(rootfiles) == 0:
@@ -183,7 +183,7 @@ def GetSamplesForHadding(thef, outdirname, verbose = True):
                 dirnames.append(dirName)
                 samplenames.append(sampleName)
                     
-                if verbose >= 1: print ' >> Found sample: ' + pcol.red + treeName + pcol.white + ' (' + pcol.cyan + sampleName + pcol.white + ')' + pcol.end
+                if verbose >= 1: print(' >> Found sample: ' + pcol.red + treeName + pcol.white + ' (' + pcol.cyan + sampleName + pcol.white + ')' + pcol.end)
                 break
         break
     return [dirnames, samplenames]
@@ -193,15 +193,15 @@ def haddThoseDatasets(inf, outdirname, pretend = False, maxSize = 5000., verbose
     dirnames, samplenames = GetSamplesForHadding(inf, outdirname, verbose)
 #    sys.exit()
     if not pretend:
-        if verbose >= 1: print pcol.red + ' STARTING...' + pcol.end
+        if verbose >= 1: print(pcol.red + ' STARTING...' + pcol.end)
     else:
-        if verbose >= 1: print pcol.red + ' PRETENDING...' + pcol.end
+        if verbose >= 1: print(pcol.red + ' PRETENDING...' + pcol.end)
 #    print dirnames, "\n", samplenames
 
     for i in range(len(dirnames)): haddtrees(dirnames[i], samplenames[i], inf + "/" + outdirname, maxSize, pretend, verbose)
     if verbose:
-        print "> Samples that have been merged:"
-        for el in samplenames: print el
+        print("> Samples that have been merged:")
+        for el in samplenames: print(el)
     
     if removeInfolder:
         for el in dirnames:

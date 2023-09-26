@@ -20,16 +20,29 @@ if __name__ == "__main__":
     parser.add_argument('--isData',     '-iD', metavar = 'isData',     dest = "isData",   required = True, default = "False")
     parser.add_argument('--xsec',     '-xS', metavar = 'xsec',     dest = "xsec",   required = True, default = 0.0)
     parser.add_argument('--outputPath',     '-o', metavar = 'outputPath',     dest = "outputPath",   required = True, default = "")
+    parser.add_argument('--split',     '-s', metavar = 'split',     dest = "split",   required = False, default = "")
     
     args        = parser.parse_args()
     files = args.files # list with all the files to pass to the processor
     name = args.name # common name to put to the output skimmed samples
-    year = int(args.year) # year of the MC or data
+    year = int(args.year.replace("PostEE", "")) # year of the MC or data
     isData = args.isData == "True" # are the files data files?
     xsec = float(args.xsec) # cross section of the process to which the files belong
     outputPath     = args.outputPath # output path where the output files will be stored
+    split = args.split # split the sample for train and signal extraction
     
-    
+    isPostEE = "PostEE" in args.year # are the files post-EE data files?
+
+    ### Debug prints
+    print("> Files: ", files)
+    print("> Name: ", name)
+    print("> Year: ", year)
+    print("> isData: ", isData)
+    print("> isPostEE: ", isPostEE)
+    print("> xsec: ", xsec)
+    print("> Output path: ", outputPath)
+    print("> Split: ", split)
+
     ### SLIM FILE
     slimfilein  = "SlimFileIn.txt"
     slimfileout = "SlimFileOut.txt"
@@ -39,9 +52,9 @@ if __name__ == "__main__":
     ### General skim (others are applied later)
     cut = ""
     if not isData:
-        cut = '((nElectron + nMuon) >= 2) || (nGenDressedLepton >= 2)'
+        cut = '(((nElectron + nMuon) >= 2) || (nGenDressedLepton >= 2))'
     else:
-        cut = '((nElectron + nMuon) >= 2) && (run <= 361906 || run >= 362350)' ### REMOVE THIS EVENT CUT FOR DATA
+        cut = '((nElectron + nMuon) >= 2)'
     
     compatibleyears = [2022]
     if year not in compatibleyears:
@@ -49,8 +62,9 @@ if __name__ == "__main__":
 
     ### Set golden json
     jsonfile = None
-    if year == "2022" and isData:
-        jsonfile = '/nfs/fanae/user/asoto/Proyectos/tW-Victor/CMSSW_10_4_0/src/PhysicsTools/NanoAODTools/data/jsonLumi/Cert_Collisions2022_355100_362760_Golden.json'    
+    if year == 2022 and isData:
+        jsonfile = '/mnt_pool/c3_users/user/asoto/Proyectos/tW-Run3/CMSSW_12_4_12/src/PhysicsTools/NanoAODTools/data/jsonLumi/Cert_Collisions2022_355100_362760_Golden.json'
+        print("> Golden JSON file: ", jsonfile)    
 
     
     ### Set up the modules
@@ -81,6 +95,7 @@ if __name__ == "__main__":
         "eta0" : 1.4442,
         "eta1" : 1.566,
         "eta2" : 2.4,
+        "etaLeak" : 1.56,
         "dxy_b" : 0.05,
         "dz_b"  : 0.10,
         "dxy_e" : 0.10,
@@ -89,11 +104,12 @@ if __name__ == "__main__":
     }
 
     muonID = lambda l : ( abs(l.eta) < IDDict["muons"]["eta"] and l.corrected_pt > IDDict["muons"]["pt"] and l.pfRelIso04_all < IDDict["muons"]["isorelpf"]
-                          and l.tightId == 1 ) # l.corrected_pt antes estaba esto en lugar de l.pt
+                          and l.tightId == 1 ) 
 
-    elecID = lambda l : ( (abs(l.eta) < IDDict["elecs"]["eta2"] and (abs(l.eta) < IDDict["elecs"]["eta0"] or abs(l.eta) > IDDict["elecs"]["eta1"]) )
+    elecID = lambda l : ( (abs(l.eta) < IDDict["elecs"]["eta2"] and (abs(l.eta + l.deltaEtaSC) < IDDict["elecs"]["eta0"] or abs(l.eta + l.deltaEtaSC) > IDDict["elecs"]["eta1"]) )
                            and l.pt > IDDict["elecs"]["pt"] and l.cutBased >= 4 and l.lostHits <= 1
-                           and ((abs(l.dxy) < IDDict["elecs"]["dxy_b"] and abs(l.dz) < IDDict["elecs"]["dz_b"]) if (abs(l.eta) <= IDDict["elecs"]["etasc_be"])     ### COMO CREIA QUE ERA
+                           and (not isPostEE or not ((l.eta + l.deltaEtaSC) > IDDict["elecs"]["etaLeak"] and int(l.seediEtaOriX) < 45 and l.seediPhiOriY > 72)) # veto the EE leak region
+                           and ((abs(l.dxy) < IDDict["elecs"]["dxy_b"] and abs(l.dz) < IDDict["elecs"]["dz_b"]) if (abs(l.eta + l.deltaEtaSC) <= IDDict["elecs"]["etasc_be"])     ### COMO CREIA QUE ERA
                            else (abs(l.dxy) < IDDict["elecs"]["dxy_e"] and abs(l.dz) < IDDict["elecs"]["dz_e"])) )
                            #and ((abs(l.dxy) < IDDict["elecs"]["dxy_b"] and abs(l.dz) < IDDict["elecs"]["dz_b"]) if (abs(l.deltaEtaSC - l.eta) <= IDDict["elecs"]["etasc_be"]) ### COMO IGUAL ES
                            #else (abs(l.dxy) < IDDict["elecs"]["dxy_e"] and abs(l.dz) < IDDict["elecs"]["dz_e"])) )
@@ -195,6 +211,18 @@ if __name__ == "__main__":
     #    else:
     #        raise RuntimeError("FATAL: no working PU & prefiring corrections set for year " + str(year) + ".")
 
+    # Splitting the sample
+    if split != "":
+        print("\t- Splitting the sample.")
+        if split == "even":
+            cut = cut + " && (event % 2 == 0)"
+            name = name + "_train" ## even events for training
+        elif split == "odd":
+            cut = cut + " && (event % 2 == 1)"
+            name = name + "_analysis" ## odd events for analysis
+        else:
+            raise RuntimeError("FATAL: unknown split option " + split + ".")
+    
     p = PostProcessor(outputPath + name,
                   files,
                   cut,
