@@ -46,19 +46,19 @@ if __name__ == '__main__':
         exec("from {samplesFile} import samples".format(samplesFile=samplesFile))
 
         for sample in samples:
-            listName = [sample["name"]]
-            files = sample["files"]
-            isData = sample["isData"]
-            year = sample["year"]
-            xsec = sample["xsec"]
+            listName = [samples[sample]["name"]]
+            files = samples[sample]["files"]
+            isData = samples[sample]["isData"]
+            year = samples[sample]["year"]
+            xsec = samples[sample]["xsec"]
             try: 
-                split = sample["split"]
+                split = samples[sample]["split"]
             except:
                 split = False
             if split:
-                listName = [sample["name"] + "_analysis", sample["name"] + "_train"]
+                listName = [samples[sample]["name"] + "_analysis", samples[sample]["name"] + "_train"]
             for name in listName:
-                # Now look in the output folder for the folder with name sample["name"]
+                # Now look in the output folder for the folder with name samples[sample]["name"]
                 # and count the number of files
                 # and compare with the number of files in the input folder
                 # print if they are different or not
@@ -111,16 +111,16 @@ if __name__ == '__main__':
                     if len(missingFiles) > 0:
                         for file in missingFiles:
                             if not split:
-                                formatedCommand = command.format(files = " -f " + file, name = sample["name"], isData = isData, year = year, xsec = xsec, outputPath = output, split = "''")
+                                formatedCommand = command.format(files = " -f " + file, name = samples[sample]["name"], isData = isData, year = year, xsec = xsec, outputPath = output, split = "''")
                                 if verbose:
                                     print(formatedCommand)
                             else:
                                 if "_train" in name:
-                                    formatedCommand = command.format(files = " -f " + file, name = sample["name"], isData = isData, year = year, xsec = xsec, outputPath = output, split = "even")
+                                    formatedCommand = command.format(files = " -f " + file, name = samples[sample]["name"], isData = isData, year = year, xsec = xsec, outputPath = output, split = "even")
                                     if verbose:
                                         print(formatedCommand)
                                 elif "_analysis" in name:
-                                    formatedCommand = command.format(files = " -f " + file, name = sample["name"], isData = isData, year = year, xsec = xsec, outputPath = output, split = "odd")
+                                    formatedCommand = command.format(files = " -f " + file, name = samples[sample]["name"], isData = isData, year = year, xsec = xsec, outputPath = output, split = "odd")
                                     if verbose:
                                         print(formatedCommand)
                                 else:

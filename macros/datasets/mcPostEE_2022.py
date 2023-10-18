@@ -1,6 +1,6 @@
 import glob
 
-nanoPath = "/beegfs/data/nanoAODv11/30march2023/MC/2022PostEE/"
+nanoPath = "/lustrefs/hdd_pool_dir/nanoAODv11/30march2023/MC/2022PostEE/"
 
 samples = {
 #-------ttbar-------# | NLO Powheg+Pythia8 

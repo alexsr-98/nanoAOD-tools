@@ -84,9 +84,15 @@ class collectionMerger(Module):
         # Create output branches
         self.out = wrappedOutputTree
         for br in self.brlist_all:
-            self.out.branch("%s_%s" % (self.output, br),
-                            _rootLeafType2rootBranchType[self.branchType[br]],
-                            lenVar="n%s" % self.output)
+            if br == "seediEtaOriX":
+                self.out.branch("%s_%s" % (self.output, br),
+                                "I",
+                                lenVar="n%s" % self.output)
+            else:
+                self.out.branch("%s_%s" % (self.output, br),
+                                _rootLeafType2rootBranchType[self.branchType[br]],
+                                lenVar="n%s" % self.output)            
+
 
     def endFile(self, inputFile, outputFile, inputTree, wrappedOutputTree):
         pass
@@ -117,7 +123,10 @@ class collectionMerger(Module):
         for bridx, br in enumerate(self.brlist_all):
             out = []
             for obj, j, i in objects:
-                out.append(getattr(obj, br) if self.is_there[bridx][j] else 0)
+                if br == "seediEtaOriX": # This corrects a bug in nanoAODv11 where the Electron_seediEtaOriX is saved in 8 bits signed but it needs higher values 
+                    out.append(int(getattr(obj, br) if self.is_there[bridx][j] else 0))
+                else:
+                    out.append(getattr(obj, br) if self.is_there[bridx][j] else 0)
             self.out.fillBranch("%s_%s" % (self.output, br), out)
         return True
 

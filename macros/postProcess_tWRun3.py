@@ -11,6 +11,7 @@ from PhysicsTools.NanoAODTools.postprocessing.modules.custom.dataTagger       im
 from PhysicsTools.NanoAODTools.postprocessing.modules.custom.xsecTagger       import xsecTagger
 from PhysicsTools.NanoAODTools.postprocessing.modules.custom.yearTagger       import yearTagger
 from PhysicsTools.NanoAODTools.postprocessing.modules.custom.calculateVariatedElePt import calculateVariatedElePt
+from PhysicsTools.NanoAODTools.postprocessing.modules.custom.applyElectronSS import applyElectronSS
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(usage = "python postProcessHelper.py [options]", description = "Script to postProcess nanoAOD", formatter_class=argparse.ArgumentDefaultsHelpFormatter)
@@ -81,6 +82,12 @@ if __name__ == "__main__":
     ##propagateElPt = lambda : calculateVariatedElePt(isData)
     ##mod.append(propagateElPt())
 
+    # Electron scale and resolution
+    print("\t- Adding electron scale and resolution branches.")
+    if year == 2022:
+        elecScaleRes2022 = lambda: applyElectronSS(isData, "SS.json")
+        mod.append(elecScaleRes2022())
+
 
     # Selecting reconstructed and counting (only) good particle-level leptons
     IDDict = {}
@@ -107,7 +114,7 @@ if __name__ == "__main__":
                           and l.tightId == 1 ) 
 
     elecID = lambda l : ( (abs(l.eta) < IDDict["elecs"]["eta2"] and (abs(l.eta + l.deltaEtaSC) < IDDict["elecs"]["eta0"] or abs(l.eta + l.deltaEtaSC) > IDDict["elecs"]["eta1"]) )
-                           and l.pt > IDDict["elecs"]["pt"] and l.cutBased >= 4 and l.lostHits <= 1
+                           and l.corrected_pt > IDDict["elecs"]["pt"] and l.cutBased >= 4 and l.lostHits <= 1
                            and (not isPostEE or not ((l.eta + l.deltaEtaSC) > IDDict["elecs"]["etaLeak"] and int(l.seediEtaOriX) < 45 and l.seediPhiOriY > 72)) # veto the EE leak region
                            and ((abs(l.dxy) < IDDict["elecs"]["dxy_b"] and abs(l.dz) < IDDict["elecs"]["dz_b"]) if (abs(l.eta + l.deltaEtaSC) <= IDDict["elecs"]["etasc_be"])     ### COMO CREIA QUE ERA
                            else (abs(l.dxy) < IDDict["elecs"]["dxy_e"] and abs(l.dz) < IDDict["elecs"]["dz_e"])) )
@@ -121,23 +128,35 @@ if __name__ == "__main__":
                           and l.tightId == 1 )
 
 
-    elecID_lepscaleUp = lambda l : ( (abs(l.eta) < IDDict["elecs"]["eta2"] and (abs(l.eta) < IDDict["elecs"]["eta0"] or abs(l.eta) > IDDict["elecs"]["eta1"]) )
+    elecID_lepscaleUp = lambda l : ( (abs(l.eta) < IDDict["elecs"]["eta2"] and (abs(l.eta + l.deltaEtaSC) < IDDict["elecs"]["eta0"] or abs(l.eta + l.deltaEtaSC) > IDDict["elecs"]["eta1"]) )
                            and l.scaleUp_pt > IDDict["elecs"]["pt"] and l.cutBased >= 4 and l.lostHits <= 1
-                           and ((abs(l.dxy) < IDDict["elecs"]["dxy_b"] and abs(l.dz) < IDDict["elecs"]["dz_b"]) if (abs(l.eta) <= IDDict["elecs"]["etasc_be"])     ### COMO CREIA QUE ERA
+                           and (not isPostEE or not ((l.eta + l.deltaEtaSC) > IDDict["elecs"]["etaLeak"] and int(l.seediEtaOriX) < 45 and l.seediPhiOriY > 72)) # veto the EE leak region
+                           and ((abs(l.dxy) < IDDict["elecs"]["dxy_b"] and abs(l.dz) < IDDict["elecs"]["dz_b"]) if (abs(l.eta + l.deltaEtaSC) <= IDDict["elecs"]["etasc_be"])     ### COMO CREIA QUE ERA
                            else (abs(l.dxy) < IDDict["elecs"]["dxy_e"] and abs(l.dz) < IDDict["elecs"]["dz_e"])) )
-    elecID_lepscaleDn = lambda l : ( (abs(l.eta) < IDDict["elecs"]["eta2"] and (abs(l.eta) < IDDict["elecs"]["eta0"] or abs(l.eta) > IDDict["elecs"]["eta1"]) )
+                           #and ((abs(l.dxy) < IDDict["elecs"]["dxy_b"] and abs(l.dz) < IDDict["elecs"]["dz_b"]) if (abs(l.deltaEtaSC - l.eta) <= IDDict["elecs"]["etasc_be"]) ### COMO IGUAL ES
+                           #else (abs(l.dxy) < IDDict["elecs"]["dxy_e"] and abs(l.dz) < IDDict["elecs"]["dz_e"])) )
+    elecID_lepscaleDn = lambda l : ( (abs(l.eta) < IDDict["elecs"]["eta2"] and (abs(l.eta + l.deltaEtaSC) < IDDict["elecs"]["eta0"] or abs(l.eta + l.deltaEtaSC) > IDDict["elecs"]["eta1"]) )
                            and l.scaleDown_pt > IDDict["elecs"]["pt"] and l.cutBased >= 4 and l.lostHits <= 1
-                           and ((abs(l.dxy) < IDDict["elecs"]["dxy_b"] and abs(l.dz) < IDDict["elecs"]["dz_b"]) if (abs(l.eta) <= IDDict["elecs"]["etasc_be"])     ### COMO CREIA QUE ERA
+                           and (not isPostEE or not ((l.eta + l.deltaEtaSC) > IDDict["elecs"]["etaLeak"] and int(l.seediEtaOriX) < 45 and l.seediPhiOriY > 72)) # veto the EE leak region
+                           and ((abs(l.dxy) < IDDict["elecs"]["dxy_b"] and abs(l.dz) < IDDict["elecs"]["dz_b"]) if (abs(l.eta + l.deltaEtaSC) <= IDDict["elecs"]["etasc_be"])     ### COMO CREIA QUE ERA
                            else (abs(l.dxy) < IDDict["elecs"]["dxy_e"] and abs(l.dz) < IDDict["elecs"]["dz_e"])) )
+                           #and ((abs(l.dxy) < IDDict["elecs"]["dxy_b"] and abs(l.dz) < IDDict["elecs"]["dz_b"]) if (abs(l.deltaEtaSC - l.eta) <= IDDict["elecs"]["etasc_be"]) ### COMO IGUAL ES
+                           #else (abs(l.dxy) < IDDict["elecs"]["dxy_e"] and abs(l.dz) < IDDict["elecs"]["dz_e"])) )
 
-    elecID_lepsigmaUp = lambda l : ( (abs(l.eta) < IDDict["elecs"]["eta2"] and (abs(l.eta) < IDDict["elecs"]["eta0"] or abs(l.eta) > IDDict["elecs"]["eta1"]) )
+    elecID_lepsigmaUp = lambda l : ( (abs(l.eta) < IDDict["elecs"]["eta2"] and (abs(l.eta + l.deltaEtaSC) < IDDict["elecs"]["eta0"] or abs(l.eta + l.deltaEtaSC) > IDDict["elecs"]["eta1"]) )
                            and l.sigmaUp_pt > IDDict["elecs"]["pt"] and l.cutBased >= 4 and l.lostHits <= 1
-                           and ((abs(l.dxy) < IDDict["elecs"]["dxy_b"] and abs(l.dz) < IDDict["elecs"]["dz_b"]) if (abs(l.eta) <= IDDict["elecs"]["etasc_be"])     ### COMO CREIA QUE ERA
+                           and (not isPostEE or not ((l.eta + l.deltaEtaSC) > IDDict["elecs"]["etaLeak"] and int(l.seediEtaOriX) < 45 and l.seediPhiOriY > 72)) # veto the EE leak region
+                           and ((abs(l.dxy) < IDDict["elecs"]["dxy_b"] and abs(l.dz) < IDDict["elecs"]["dz_b"]) if (abs(l.eta + l.deltaEtaSC) <= IDDict["elecs"]["etasc_be"])     ### COMO CREIA QUE ERA
                            else (abs(l.dxy) < IDDict["elecs"]["dxy_e"] and abs(l.dz) < IDDict["elecs"]["dz_e"])) )
-    elecID_lepsigmaDn = lambda l : ( (abs(l.eta) < IDDict["elecs"]["eta2"] and (abs(l.eta) < IDDict["elecs"]["eta0"] or abs(l.eta) > IDDict["elecs"]["eta1"]) )
+                           #and ((abs(l.dxy) < IDDict["elecs"]["dxy_b"] and abs(l.dz) < IDDict["elecs"]["dz_b"]) if (abs(l.deltaEtaSC - l.eta) <= IDDict["elecs"]["etasc_be"]) ### COMO IGUAL ES
+                           #else (abs(l.dxy) < IDDict["elecs"]["dxy_e"] and abs(l.dz) < IDDict["elecs"]["dz_e"])) )
+    elecID_lepsigmaDn = lambda l : ( (abs(l.eta) < IDDict["elecs"]["eta2"] and (abs(l.eta + l.deltaEtaSC) < IDDict["elecs"]["eta0"] or abs(l.eta + l.deltaEtaSC) > IDDict["elecs"]["eta1"]) )
                            and l.sigmaDown_pt > IDDict["elecs"]["pt"] and l.cutBased >= 4 and l.lostHits <= 1
-                           and ((abs(l.dxy) < IDDict["elecs"]["dxy_b"] and abs(l.dz) < IDDict["elecs"]["dz_b"]) if (abs(l.eta) <= IDDict["elecs"]["etasc_be"])     ### COMO CREIA QUE ERA
+                           and (not isPostEE or not ((l.eta + l.deltaEtaSC) > IDDict["elecs"]["etaLeak"] and int(l.seediEtaOriX) < 45 and l.seediPhiOriY > 72)) # veto the EE leak region
+                           and ((abs(l.dxy) < IDDict["elecs"]["dxy_b"] and abs(l.dz) < IDDict["elecs"]["dz_b"]) if (abs(l.eta + l.deltaEtaSC) <= IDDict["elecs"]["etasc_be"])     ### COMO CREIA QUE ERA
                            else (abs(l.dxy) < IDDict["elecs"]["dxy_e"] and abs(l.dz) < IDDict["elecs"]["dz_e"])) )
+                           #and ((abs(l.dxy) < IDDict["elecs"]["dxy_b"] and abs(l.dz) < IDDict["elecs"]["dz_b"]) if (abs(l.deltaEtaSC - l.eta) <= IDDict["elecs"]["etasc_be"]) ### COMO IGUAL ES
+                           #else (abs(l.dxy) < IDDict["elecs"]["dxy_e"] and abs(l.dz) < IDDict["elecs"]["dz_e"])) )
 
 
     from PhysicsTools.NanoAODTools.postprocessing.modules.common.collectionMerger import collectionMerger
@@ -156,25 +175,23 @@ if __name__ == "__main__":
     mod.append(lepMerge_muenUp())
     mod.append(lepMerge_muenDn())
 
-    if isData:
+    if not isData:
         lepMerge_elscaleUp = lambda : collectionMerger(input = ["Electron", "Muon"],
                                                     output = "LepGoodelscaleUp",
                                                     selector = dict(Muon = muonID, Electron = elecID_lepscaleUp))
         lepMerge_elscaleDn = lambda : collectionMerger(input = ["Electron", "Muon"],
                                                     output = "LepGoodelscaleDown",
                                                     selector = dict(Muon = muonID, Electron = elecID_lepscaleDn))
-
-        #mod.append(lepMerge_elscaleUp())
-        #mod.append(lepMerge_elscaleDn())
-    else:
         lepMerge_elsigmaUp = lambda : collectionMerger(input = ["Electron", "Muon"],
                                                     output = "LepGoodelsigmaUp",
                                                     selector = dict(Muon = muonID, Electron = elecID_lepsigmaUp))
         lepMerge_elsigmaDn = lambda : collectionMerger(input = ["Electron", "Muon"],
                                                     output = "LepGoodelsigmaDown",
                                                     selector = dict(Muon = muonID, Electron = elecID_lepsigmaDn))
-        #mod.append(lepMerge_elsigmaUp())
-        #mod.append(lepMerge_elsigmaDn())
+        mod.append(lepMerge_elsigmaUp())
+        mod.append(lepMerge_elsigmaDn())
+        mod.append(lepMerge_elscaleUp())
+        mod.append(lepMerge_elscaleDn())
 
     # Reconst. lepton skim
     print("\t- Adding skim in reconstructed leptons properties.")
