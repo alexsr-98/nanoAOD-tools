@@ -6,7 +6,7 @@ import os
 from PhysicsTools.NanoAODTools.postprocessing.framework.datamodel import Collection 
 from PhysicsTools.NanoAODTools.postprocessing.framework.eventloop import Module
 
-class skipNRecoLeps(Module):
+class skipNRecoLepsRun3(Module):
     def __init__(self, isdata = False, year = 17, recalibjets = '', era = ''):
         self.minelpt    =  8# 12 # 10 for 5 TeV, 18 for 13 # 7 for multilep
         self.minmupt    =  8#  0 for 5 TeV, 18 for 13 # 7 for multilep
@@ -80,4 +80,4 @@ class skipNRecoLeps(Module):
 
         return event_pass
 
-skimRecoLeps = lambda isData: skipNRecoLeps(isdata = isData)
+skimRecoLepsRun3 = lambda isData: skipNRecoLepsRun3(isdata = isData)

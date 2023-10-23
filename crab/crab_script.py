@@ -43,6 +43,7 @@ if era !='': print '>Found era: ', era
 #####CUT
 if not isData:
   cut = '((nElectron + nMuon) >= 2 || (nGenDressedLepton >= 2))'
+  #cut = '(nElectron >= 1 && nMuon >= 1)'
 else:
   cut = '((nElectron + nMuon) >= 2)'
 
@@ -104,7 +105,7 @@ if doTnP:
 else:
   if not doNotSkim: 
     if year == 22:
-      mod.append(skimRecoLeps(isData))
+      mod.append(skimRecoLepsRun3(isData))
     elif year == 5:
       print("Adding 5 TeV skim!!")
       mod.append(skimRecoLeps5TeV())

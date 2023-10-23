@@ -1,2 +1,26 @@
+# DoubleMuon and Single
+/DoubleMuon/Run2022C-ReRecoNanoAODv11-v1/NANOAOD
+/SingleMuon/Run2022C-ReRecoNanoAODv11-v1/NANOAOD
 
+# Muon
+/Muon/Run2022C-ReRecoNanoAODv11-v1/NANOAOD
+/Muon/Run2022D-ReRecoNanoAODv11-v1/NANOAOD
+/Muon/Run2022E-ReRecoNanoAODv11-v1/NANOAOD
 
+# MuonEG
+/MuonEG/Run2022D-ReRecoNanoAODv11-v1/NANOAOD
+/MuonEG/Run2022E-ReRecoNanoAODv11-v1/NANOAOD
+
+# EGamma
+/EGamma/Run2022C-ReRecoNanoAODv11-v1/NANOAOD
+/EGamma/Run2022D-ReRecoNanoAODv11-v1/NANOAOD
+/EGamma/Run2022E-ReRecoNanoAODv11-v1/NANOAOD
+
+# JetMET
+/JetMET/Run2022C-ReRecoNanoAODv11-v1/NANOAOD
+/JetMET/Run2022D-ReRecoNanoAODv11-v1/NANOAOD
+/JetMET/Run2022E-ReRecoNanoAODv11-v1/NANOAOD
+
+# JetHT and MET
+/JetHT/Run2022C-ReRecoNanoAODv11-v1/NANOAOD
+/MET/Run2022C-ReRecoNanoAODv11-v1/NANOAOD

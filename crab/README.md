@@ -8,6 +8,8 @@ You can create a txt file with samples and send jobs for all of them.
 
     python SubmitDatasets.py datasets/data2017_TnP.txt --test --pretend --verbose --options "TnP,2017"
 
-### Produce skim for nanov11 Run3
-python SubmitDatasets.py datasets/mc2022PostEE.txt --prodName mcRun3_PostEE_april2023 -v --outTier T3_CH_CERNBOX
+### Produce skim for nano Run3
+python SubmitDatasets.py datasets/mc2022PostEE_v12.txt --prodName mcRun3_PostEE_oct2023 -v --outTier T2_ES_IFCA
 python SubmitDatasets.py datasets/mc2022.txt --prodName mcRun3_2022_april2023 -v --outTier T3_CH_CERNBOX
+python SubmitDatasets.py datasets/data2022PostEE_v12.txt --prodName dataRun3_PostEE_Oct2023 -v --outTier T2_ES_IFCA
+python SubmitDatasets.py datasets/data2022.txt --prodName dataRun3_2022_april2023 -v --outTier T3_CH_CERNBOX

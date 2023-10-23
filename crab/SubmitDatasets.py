@@ -140,7 +140,7 @@ def CrateCrab_cfg(datasetName, isData = False, isTest = False, productionTag = '
       lumijson = 'Cert_306546-306826_5TeV_EOY2017ReReco_Collisions17_JSON.txt'
 
   # Set according to input parameters
-  totalUnits = 3000 # test
+  totalUnits = -1 # test
 
   # Set as MC... the only way the Count histogram works!! --> So we can compare with the numbers in DAS
   #if isData: 
