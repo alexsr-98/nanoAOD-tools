@@ -170,7 +170,8 @@ def CrateCrab_cfg(datasetName, isData = False, isTest = False, productionTag = '
   text += "config = Configuration()\nconfig.section_('General')\n"
   text += t_localdir
   text += "config.General.transferLogs=True\nconfig.section_('JobType')\nconfig.JobType.pluginName = 'Analysis'\n"
-  text += "config.JobType.psetName = 'PSet.py'\nconfig.JobType.scriptExe = '" + crabScriptSH + "'\nconfig.JobType.sendPythonFolder = True\n"
+  #text += "config.JobType.psetName = 'PSet.py'\nconfig.JobType.scriptExe = '" + crabScriptSH + "'\nconfig.JobType.sendPythonFolder = True\n"
+  text += "config.JobType.psetName = 'PSet.py'\nconfig.JobType.scriptExe = '" + crabScriptSH + "'\n"
   text += t_allowCMSSW
   text += t_inputfiles
   text += "config.section_('Data')\n"
