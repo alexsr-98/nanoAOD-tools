@@ -10,7 +10,7 @@ from PhysicsTools.NanoAODTools.postprocessing.modules.custom.datasetName      im
 from PhysicsTools.NanoAODTools.postprocessing.modules.custom.dataTagger       import dataTagger
 from PhysicsTools.NanoAODTools.postprocessing.modules.custom.xsecTagger       import xsecTagger
 from PhysicsTools.NanoAODTools.postprocessing.modules.custom.yearTagger       import yearTagger
-from PhysicsTools.NanoAODTools.postprocessing.modules.custom.calculateVariatedElePt import calculateVariatedElePt
+#from PhysicsTools.NanoAODTools.postprocessing.modules.custom.calculateVariatedElePt import calculateVariatedElePt
 from PhysicsTools.NanoAODTools.postprocessing.modules.custom.applyElectronSS import applyElectronSS
 
 if __name__ == "__main__":
@@ -33,6 +33,7 @@ if __name__ == "__main__":
     split = args.split # split the sample for train and signal extraction
     
     isPostEE = "PostEE" in args.year # are the files post-EE data files?
+    isNanoGEN = "BBLLNuNu" in name # are the files nanoGEN files?
 
     ### Debug prints
     print("> Files: ", files)
@@ -52,11 +53,14 @@ if __name__ == "__main__":
 
     ### General skim (others are applied later)
     cut = ""
-    if not isData:
-        cut = '(((nElectron + nMuon) >= 2) || (nGenDressedLepton >= 2))'
+    if not isNanoGEN:
+        if not isData:
+            cut = '(((nElectron + nMuon) >= 2) || (nGenDressedLepton >= 2))'
+        else:
+            cut = '((nElectron + nMuon) >= 2)'
     else:
-        cut = '((nElectron + nMuon) >= 2)'
-    
+        cut = '((nGenDressedLepton >= 2))'
+
     compatibleyears = [2022]
     if year not in compatibleyears:
         raise RuntimeError("FATAL: unknown year set.")
@@ -84,9 +88,12 @@ if __name__ == "__main__":
 
     # Electron scale and resolution
     print("\t- Adding electron scale and resolution branches.")
-    if year == 2022:
-        elecScaleRes2022 = lambda: applyElectronSS(isData, "SS.json")
+    if year == 2022 and isPostEE:
+        elecScaleRes2022 = lambda: applyElectronSS(isData, "electronSS_EFG.json", "2022Re-recoE+PromptFG")
         mod.append(elecScaleRes2022())
+    else:
+        elecScaleRes2022 = lambda: applyElectronSS(isData, "electronSS_BCD.json", "2022Re-recoBCD")
+        mod.append(elecScaleRes2022())       
 
 
     # Selecting reconstructed and counting (only) good particle-level leptons
@@ -164,16 +171,18 @@ if __name__ == "__main__":
                                          output = "LepGood",
                                          selector = dict(Muon = muonID, Electron = elecID))
 
-    lepMerge_muenUp = lambda : collectionMerger(input = ["Electron", "Muon"],
-                                                output = "LepGoodmuUp",
-                                                selector = dict(Muon = muonID_lepenUp, Electron = elecID))
-    lepMerge_muenDn = lambda : collectionMerger(input = ["Electron", "Muon"],
-                                                output = "LepGoodmuDown",
-                                                selector = dict(Muon = muonID_lepenDn, Electron = elecID))
-
     mod.append(lepMerge())
-    mod.append(lepMerge_muenUp())
-    mod.append(lepMerge_muenDn())
+
+    if not isData:
+        lepMerge_muenUp = lambda : collectionMerger(input = ["Electron", "Muon"],
+                                                    output = "LepGoodmuUp",
+                                                    selector = dict(Muon = muonID_lepenUp, Electron = elecID))
+        lepMerge_muenDn = lambda : collectionMerger(input = ["Electron", "Muon"],
+                                                    output = "LepGoodmuDown",
+                                                    selector = dict(Muon = muonID_lepenDn, Electron = elecID))
+    
+        mod.append(lepMerge_muenUp())
+        mod.append(lepMerge_muenDn())
 
     if not isData:
         lepMerge_elscaleUp = lambda : collectionMerger(input = ["Electron", "Muon"],
@@ -197,6 +206,10 @@ if __name__ == "__main__":
     print("\t- Adding skim in reconstructed leptons properties.")
     detailedSkim = lambda : leptonSkimmer(isData)
     mod.append(detailedSkim())
+
+    # Clean modules for nanoGEN
+    if isNanoGEN:
+        mod = []
 
     # Dataset name
     print("\t- Adding dataset name branch.")

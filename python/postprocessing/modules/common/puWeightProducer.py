@@ -21,9 +21,9 @@ class puWeightProducer(Module):
         self.targeth = self.loadHisto(targetfile, targethist)
         if doSysVar:
             self.targeth_plus = self.loadHisto(targetfile,
-                                               targethist + "_plus")
+                                               targethist + "_up")
             self.targeth_minus = self.loadHisto(targetfile,
-                                                targethist + "_minus")
+                                                targethist + "_down")
         self.fixLargeWeights = True  # temporary fix
         if myfile != "auto":
             self.autoPU = False
@@ -60,7 +60,7 @@ class puWeightProducer(Module):
     def loadHisto(self, filename, hname):
         tf = ROOT.TFile.Open(filename)
         hist = tf.Get(hname)
-        hist.SetDirectory(None)
+        hist.SetDirectory(0)
         tf.Close()
         return hist
 
@@ -92,8 +92,8 @@ class puWeightProducer(Module):
             self._worker_minus = ROOT.WeightCalculatorFromHistogram(
                 self.myh, self.targeth_minus, self.norm, self.fixLargeWeights,
                 self.verbose)
-            self.out.branch(self.name + "Up", "F")
-            self.out.branch(self.name + "Down", "F")
+            self.out.branch(self.name + "_up", "F")
+            self.out.branch(self.name + "_dn", "F")
 
     def endFile(self, inputFile, outputFile, inputTree, wrappedOutputTree):
         pass
@@ -113,8 +113,8 @@ class puWeightProducer(Module):
             weight = 1
         self.out.fillBranch(self.name, weight)
         if self.doSysVar:
-            self.out.fillBranch(self.name + "Up", weight_plus)
-            self.out.fillBranch(self.name + "Down", weight_minus)
+            self.out.fillBranch(self.name + "_up", weight_plus)
+            self.out.fillBranch(self.name + "_dn", weight_minus)
         return True
 
 

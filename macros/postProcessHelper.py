@@ -4,8 +4,8 @@ import os, sys, json, argparse
 from math import ceil
 
 #### Modify as you wish
-production = "2023-09-10"
-outPath = "/lustrefs/hdd_pool_dir/nanoAODv11/tw-run3/productions/" + production + "/{year}/"
+production = "2023-12-23_temp"
+outPath = "/lustrefs/hdd_pool_dir/nanoAODv12/tw-run3/productions/" + production + "/{year}/"
 #outPath = "/pool/phedexrw/userstorage/asoto/Proyectos/tw_run3/productions/" + production + "/{year}/"
 logPath = outPath + "logs/"
 jobName = "postProcess_twRun3"

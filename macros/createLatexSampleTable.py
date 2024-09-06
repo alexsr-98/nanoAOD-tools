@@ -2,12 +2,16 @@ import os, sys, argparse
 sys.path.append('./' + "datasets")
 
 datasetInfo = {
-    "mcPostEE_2022"   : "/Run3Summer22EENanoAODv11-126X_mcRun3_2022_realistic_postEE_v1-v2/NANOAODSIM",
-    "dataPostEE_2022" : {"F" : "/Run2022F-PromptNanoAODv11_v1-v2/NANOAOD", 
-                         "G" : "/Run2022G-PromptNanoAODv11_v1-v2/NANOAOD"},
+    "mc_2022"   : "/Run3Summer22NanoAODv12-130X_mcRun3_2022_realistic_v5-v2/NANOAODSIM",
+    "mcPostEE_2022"   : "/Run3Summer22EENanoAODv12-130X_mcRun3_2022_realistic_postEE_v6-v2/NANOAODSIM",
+    "data_2022"       : {"C" : "/Run2022C-22Sep2023-v1/NANOAOD", 
+                         "D" : "/Run2022D-22Sep2023-v1/NANOAOD"},
+    "dataPostEE_2022" : {"E" : "/Run2022E-22Sep2023-v1/NANOAOD", 
+                         "F" : "/Run2022F-22Sep2023-v1/NANOAOD", 
+                         "G" : "/Run2022G-22Sep2023-v1/NANOAOD"},
 }
     
-systematicsStrings = ["TuneCP5_ERDOn", "TuneCP5CR1", "TuneCP5CR2", "TuneCP5Up", "TuneCP5Down", "Hdamp", "MT-17", "DS_TuneCP5"]
+systematicsStrings = ["TuneCP5_ERDOn", "TuneCP5CR1", "TuneCP5CR2", "TuneCP5Up", "TuneCP5Down", "Hdamp", "MT-17", "MT-16", "DS_TuneCP5"]
 
     
 if __name__ == '__main__':
@@ -18,10 +22,10 @@ if __name__ == '__main__':
     samplesFile = args.file
     exec("from {samplesFile} import samples".format(samplesFile=samplesFile))
     # Create the latex table header
-    latexmc_table = "\\begin{tabular}{|c|c|}\n\\hline\nDataset Name & Cross Section (pb) \\\\\n\\hline\n"
-    latexdata_table = "\\begin{tabular}{|c|c|}\n\\hline\nDataset Name & Luminosity (\invfb) \\\\\n\\hline\n"
-    latexsyst_table = "\\begin{tabular}{|c|c|}\n\\hline\nDataset Name & Cross Section (pb) \\\\\n\\hline\n"
-    latexmctrain_table = "\\begin{tabular}{|c|c|}\n\\hline\nDataset Name & Cross Section (pb) \\\\\n\\hline\n"
+    latexmc_table = "\\begin{tabular}{cc}\n\\hline\nDataset Name & Cross Section (pb) \\\\\n\\hline\n"
+    latexdata_table = "\\begin{tabular}{cc}\n\\hline\nDataset Name & Luminosity (\invfb) \\\\\n\\hline\n"
+    latexsyst_table = "\\begin{tabular}{cc}\n\\hline\nDataset Name & Cross Section (pb) \\\\\n\\hline\n"
+    latexmctrain_table = "\\begin{tabular}{cc}\n\\hline\nDataset Name & Cross Section (pb) \\\\\n\\hline\n"
     # First, order the dictionary into a list by the xsec (higher first)
     samples = sorted(samples.items(), key=lambda x: x[1]['xsec'], reverse=True)
     # Order the ones with the same cross section by name
@@ -35,7 +39,7 @@ if __name__ == '__main__':
             runLetter = sample[1]['name'].split("Run2022")[1]
             dataset_name = (sample[1]['name'] + datasetInfo[samplesFile][runLetter]).replace("_","\_")
         else:
-            dataset_name = (sample[1]['name'] + datasetInfo[samplesFile]).replace("_","\_") #### NOTE: the index [0] is the key and [1] is the value
+            dataset_name = (sample[1]['name']).replace("_","\_") + "/X" #### NOTE: the index [0] is the key and [1] is the value
         cross_section = sample[1]['xsec']
 
         if isData:
@@ -48,10 +52,11 @@ if __name__ == '__main__':
             else:
                 latexsyst_table += "{dataset_name} & {cross_section} \\\\\n".format(dataset_name=dataset_name, cross_section=cross_section)
     # Create the latex table footer
-    latexmc_table += "\\hline\n\\end{tabular}\n"
     latexdata_table += "\\hline\n\\end{tabular}\n"
-    latexsyst_table += "\\hline\n\\end{tabular}\n"
-    latexmctrain_table += "\\hline\n\\end{tabular}\n"
+    if not isData:
+        latexmc_table += "\\hline\n" + "X: " + datasetInfo[samplesFile].replace("_", "\_") + " \\\ \n\\hline\n\\end{tabular}\n"
+        latexsyst_table += "\\hline\n" + "X: " + datasetInfo[samplesFile].replace("_", "\_") + " \\\ \n\\hline\n\\end{tabular}\n"
+        latexmctrain_table += "\\hline\n" + "X: " + datasetInfo[samplesFile].replace("_", "\_") + " \\\ \n\\hline\n\\end{tabular}\n"
     
     # Save the table in the directory ./tablesAN
     if not os.path.exists("tablesAN"):

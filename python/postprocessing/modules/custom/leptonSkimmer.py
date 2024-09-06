@@ -32,5 +32,5 @@ class leptonSkimmer(Module):
                 if iL.pt > self.minpt and abs(iL.eta) < self.maxeta:
                     nlepgengood += 1
 
-            return ((ev.nLepGood >= 2 or ev.nLepGoodelsigmaUp >= 2 or ev.nLepGoodelsigmaDown >= 2 or ev.nLepGoodelscaleUp >= 2 or ev.nLepGoodelscaleDown >= 2)
+            return ((ev.nLepGood >= 2 or ev.nLepGoodelsigmaUp >= 2 or ev.nLepGoodelsigmaDown >= 2 or ev.nLepGoodelscaleUp >= 2 or ev.nLepGoodelscaleDown >= 2 or ev.nLepGoodmuUp >= 2 or ev.nLepGoodmuDown >= 2)
                     or (nlepgengood >= 2))

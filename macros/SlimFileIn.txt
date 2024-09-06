@@ -79,3 +79,5 @@ keep HLT_PFMET170_*
 keep HLT_PFMET*120_*
 keep HLT_PFMET200*
 keep HLT_PFMETTypeOne200_*
+
+keep L1_UnprefireableEvent

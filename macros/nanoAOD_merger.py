@@ -105,7 +105,7 @@ def haddtrees(dirname, outname, outdir, maxsize = 5000., pretend = False, verbos
         out   = float(os.path.getsize(iF))/1000000. 
         size  += out
         
-        if size < maxsize and len(rootfiles) < 900: 
+        if size < maxsize and len(rootfiles) < 700: 
             if verbose >= 1: print('Adding ' + pcol.orange + iF.split("/")[-1] + pcol.end + ' (' + pcol.cyan + '%1.0f MB' %(out) + pcol.end + '). ' + pcol.white + 'Total: %1.0f MB' %(size) + pcol.end)
             rootfiles.append(iF)
         else:

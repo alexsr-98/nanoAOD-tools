@@ -18,13 +18,13 @@ List of important files:
 Steps to run the post processing:
  
  * python postProcessHelper.py -f mcPostEE_2022 -q batch -j 120000
- * Note: always run: python problemChecker.py -f mcPostEE_2022 -o /beegfs/data/nanoAODv11/tw-run3/productions/2023-04-10/2022PostEE/
- * If you want to skip the merging step (not recommeded): python moveAndRename.py -i /beegfs/data/nanoAODv9/temp/postprocv10Run3/tw_run3/productions/2022-10-25/2022/
-
- * Before running this command check with pretend that everything is ok: NECESITO SOLUCIONAR POR QUE NO HACE CP CUANDO ME PASO DEL TAMANIO
-    python nanoAOD_merger.py -i /beegfs/data/nanoAODv11/tw-run3/productions/2023-05-29/2022PostEE/  -v -o ./ -s 10000 &> mergeLog.txt
+ * Note: always run: python problemChecker.py -f mcPostEE_2022 -o /lustrefs/hdd_pool_dir/nanoAODv12/tw-run3/productions/2023-10-25/2022PostEE/
+ * Before running this command check with pretend that everything is ok: 
+    python nanoAOD_merger.py -i /lustrefs/hdd_pool_dir/nanoAODv12/tw-run3/productions/2023-10-25/2022PostEE/  -v -o ./ -s 10000 &> mergeLog.txt
  * After running this command, check that the number of entries is the same and then rm:
     python problemChecker.py -f data_2022 -o /beegfs/data/nanoAODv9/temp/postprocv10Run3/tw_run3/productions/2023-01-24_forData_removeLater/2022/ -cN
+
+ * If you want to skip the merging step (not recommeded): python moveAndRename.py -i /beegfs/data/nanoAODv9/temp/postprocv10Run3/tw_run3/productions/2022-10-25/2022/
 
  Important things to take into account:
 
